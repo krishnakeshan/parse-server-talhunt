@@ -1,3 +1,3 @@
 Parse.Cloud.define('hello', function(req, res) {
-  return 'Hi';
+  res.success("hello defined");
 });
