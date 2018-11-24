@@ -17,7 +17,6 @@ publicIP.v4().then(ip => {
     "apps": [{
       "serverURL": "http://" + ip + ":1337/parse",
       "appId": "talhuntAppId",
-      "restAPIKey": "twfjvixPrIc5yQeu06AATbAVjAtdzNon",
       "masterKey": "ioVfggXfTl9NGww0Cc55",
       "appName": "Talhunt"
     }],
@@ -30,11 +29,17 @@ publicIP.v4().then(ip => {
   }, options)
 
   var api = new ParseServer({
+    //basic config
     databaseURI: 'mongodb://localhost:27017/dev',
     cloud: __dirname + '/cloud/main.js',
     appId: 'talhuntAppId',
     masterKey: 'ioVfggXfTl9NGww0Cc55',
+    restAPIKey: "twfjvixPrIc5yQeu06AATbAVjAtdzNon",
     serverURL: "http://" + ip + ":1337/parse", // Don't forget to change to https
+    
+    //extra config
+    allowClientClassCreation: false,
+    enableAnonymousUsers: false,
     liveQuery: {
       classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
     }
