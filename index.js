@@ -23,7 +23,7 @@ publicIP.v4().then(ip => {
 
     "users": [{
       "user": "Manju",
-      "pass": "$2y$12$j3gPXg0FStkg2kFDATGMxurUj/3UYvILZZbvbyBaumf/Z7IE7BdNi"
+      "pass": "$2b$10$l6FmblFmehnG3RWgaraX5./H9ePUAiJHOkTfIHJ86fW28W06izxMC"
     }],
     "useEncryptedPasswords": true
   }, options)
