@@ -13,7 +13,8 @@
     "kerberos": "0.0.24",
     "parse": "1.11.1",
     "parse-server": "2.8.4",
-    "parse-dashboard": "1.2.0"
+    "parse-dashboard": "1.2.0",
+    "public-ip": "2.4.0"
   },
   "scripts": {
     "start": "node index.js"
