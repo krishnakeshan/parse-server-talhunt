@@ -10,13 +10,13 @@ var options = {
   allowInsecureHTTP: true
 }
 
-var dashboard = new ParseDashboard({
-  "apps": [
+var dashboard = new ParseDashbord({
+  "apps": [{
     "serverURL": "http://localhost:1337/parse",
     "appId": "talhuntAppId",
     "masterKey": "ioVfggXfTl9NGww0Cc55",
     "appName": "Talhunt"
-  ]
+  }]
 }, options)
 
 var api = new ParseServer({
@@ -24,7 +24,7 @@ var api = new ParseServer({
   cloud: __dirname + '/cloud/main.js',
   appId: 'talhuntAppId',
   masterKey: 'ioVfggXfTl9NGww0Cc55', //Add your master key here. Keep it secret!
-  serverURL: 'http://localhost:1337/parse',  // Don't forget to change to https if needed
+  serverURL: 'http://localhost:1337/parse', // Don't forget to change to https if needed
   liveQuery: {
     classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
   }
@@ -43,20 +43,20 @@ app.use('/parse', api);
 app.use('/dashboard', dashboard);
 
 // Parse Server plays nicely with the rest of your web routes
-app.get('/', function(req, res) {
+app.get('/', function (req, res) {
   res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
 });
 
 // There will be a test page available on the /test path of your server url
 // Remove this before launching your app
-app.get('/test', function(req, res) {
+app.get('/test', function (req, res) {
   res.sendFile(path.join(__dirname, '/public/test.html'));
 });
 
-var port = process.env.PORT || 1337;
+var port = 1337;
 var httpServer = require('http').createServer(app);
-httpServer.listen(port, function() {
-    console.log('parse-server-example running on port ' + port + '.');
+httpServer.listen(port, function () {
+  console.log('parse-server-example running on port ' + port + '.');
 });
 
 // This will enable the Live Query real-time server
