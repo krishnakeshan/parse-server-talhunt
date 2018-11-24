@@ -17,6 +17,7 @@ publicIP.v4().then(ip => {
     "apps": [{
       "serverURL": "http://" + ip + ":1337/parse",
       "appId": "talhuntAppId",
+      "restAPIKey": "twfjvixPrIc5yQeu06AATbAVjAtdzNon",
       "masterKey": "ioVfggXfTl9NGww0Cc55",
       "appName": "Talhunt"
     }],
