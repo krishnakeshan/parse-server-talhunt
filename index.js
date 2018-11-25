@@ -34,6 +34,7 @@ publicIP.v4().then(ip => {
     appId: 'talhuntAppId',
     masterKey: 'ioVfggXfTl9NGww0Cc55',
     restAPIKey: "twfjvixPrIc5yQeu06AATbAVjAtdzNon",
+    clientKey: "bHBZOaFPFSRQiHv8MO7AsT38DrkGeXxr",
     serverURL: "http://" + ip + ":1337/parse", // Don't forget to change to https
 
     //extra config
