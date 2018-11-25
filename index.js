@@ -20,7 +20,6 @@ publicIP.v4().then(ip => {
       "masterKey": "ioVfggXfTl9NGww0Cc55",
       "appName": "Talhunt"
     }],
-
     "users": [{
       "user": "Manju",
       "pass": "$2b$10$l6FmblFmehnG3RWgaraX5./H9ePUAiJHOkTfIHJ86fW28W06izxMC"
@@ -36,7 +35,7 @@ publicIP.v4().then(ip => {
     masterKey: 'ioVfggXfTl9NGww0Cc55',
     restAPIKey: "twfjvixPrIc5yQeu06AATbAVjAtdzNon",
     serverURL: "http://" + ip + ":1337/parse", // Don't forget to change to https
-    
+
     //extra config
     allowClientClassCreation: false,
     enableAnonymousUsers: false,
