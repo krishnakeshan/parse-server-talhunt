@@ -4,5 +4,5 @@ exports.facebookAppId = "2196060427333447"
 
 //options object for using master key
 exports.useMasterKeyOption = {
-    "useMasterKey": true
+    useMasterKey: true
 }
