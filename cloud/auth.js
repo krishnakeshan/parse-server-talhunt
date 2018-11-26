@@ -27,7 +27,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
                 newUser.set("username", userInfo.phone.number)
                 newUser.set("password", password)
                 newUser.set("phone", userInfo.phone.number)
-                newUser.signUp().then((newUser) => {
+                newUser.signUp(objects.useMasterKeyOption).then((newUser) => {
                     //created parse user, now create firebase user
                     main.firebaseAdmin.auth().createCustomToken(userInfo.id)
                         .then(function (customToken) {
