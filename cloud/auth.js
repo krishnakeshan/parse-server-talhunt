@@ -20,7 +20,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
         //check if user with this information already exists
         var userQuery = new Parse.Query(Parse.User)
         userQuery.equalTo("facebookId", userInfo.id)
-        userQuery.find().then((users) => {
+        userQuery.find(objects.useMasterKeyOption).then((users) => {
             if (users.length == 0) {
                 //user doesn't exist, create new
                 var newUser = new Parse.User()
