@@ -37,12 +37,12 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
                         }).catch(function (error) {
                             //error generating token
                             console.log("error creating custom token " + error)
-                            res.error("error creating custom token")
+                            res.error("error creating custom token " + error)
                         })
                 }, (error) => {
                     //error occured signing up
                     console.log("error creating user " + error)
-                    res.error("error creating user")
+                    res.error("error creating user " + error)
                 })
             }
 
@@ -53,10 +53,10 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
             }
         }, (error) => {
             console.log("error finding users " + error)
-            res.error("error getting users")
+            res.error("error getting users " + error)
         })
     }).catch(function (error) {
         console.log("error validating token " + error)
-        res.error("error getting user information")
+        res.error("error getting user information " + error)
     })
 })
