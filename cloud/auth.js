@@ -89,7 +89,11 @@ Parse.Cloud.define("addUserSportsDetails", function(req, res) {
         }, (error) => {
             //error saving user object, return error message
             console.log("error saving user object")
-            res.error("Error Adding Sports Details. Please try again in sometime");
+            res.error("Error Adding Sports Details. Please try again in sometime")
         })
+    }, (error) => {
+        //error fetching user object
+        console.log("error fetching user object " + error)
+        res.error("Error Adding Sports Details. Please try again in sometime")
     })
 })
