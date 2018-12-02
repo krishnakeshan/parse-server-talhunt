@@ -24,7 +24,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
             if (users.length == 0) {
                 //user doesn't exist, create new
                 var newUser = new Parse.User()
-                newUser.set("username", userInfo.phone.number)
+                newUser.set("username", userInfo.phone.national_number)
                 newUser.set("password", password)
                 newUser.set("facebookId", userInfo.id)
                 newUser.set("phone", userInfo.phone.number)
@@ -67,8 +67,34 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
     })
 })
 
+//method to login user
+Parse.Cloud.define("loginUser", function (req, res) {
+    var params = req.params
+    var username = params.username
+    var password = params.password
+
+    //log user into Parse
+    Parse.User.logIn(username, password).then((loggedInUser) => {
+        //signed in user successfully, login to firebase
+        main.firebaseAdmin.auth().createCustomToken(loggedInUser.id)
+            .then(function (customToken) {
+                //logged into Firebase
+                let tokens = loggedInUser.getSessionToken() + "," + customToken
+                res.success(tokens)
+            }).catch(function (error) {
+                //error logging into Firebase
+                console.log("error logging into Firebase " + error)
+                res.error("We're having trouble logging you in. Please try again in sometime.")
+            })
+    }, (error) => {
+        //error signing in user
+        console.log("error signing into Parse " + error)
+        res.error("We're having trouble logging you in. Please try again in sometime.")
+    })
+})
+
 //method to save this user's sports details
-Parse.Cloud.define("addUserSportsDetails", function(req, res) {
+Parse.Cloud.define("addUserSportsDetails", function (req, res) {
     console.log("Starting addUserSportsDetails")
     var params = req.params
     var userId = params.userId
@@ -82,7 +108,7 @@ Parse.Cloud.define("addUserSportsDetails", function(req, res) {
         console.log("got user object")
         userObject.set("sports", sports)
         userObject.set("positions", positions)
-        userObject.save(null, objects.useMasterKeyOption).then((savedObject)=> {
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
             //saved user object, return success message
             console.log("saved user object");
             res.success("added sports details")
