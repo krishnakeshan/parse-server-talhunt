@@ -26,8 +26,13 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
                 var newUser = new Parse.User()
                 newUser.set("username", userInfo.phone.number)
                 newUser.set("password", password)
-                newUser.set("phone", userInfo.phone.number)
                 newUser.set("facebookId", userInfo.id)
+                newUser.set("phone", userInfo.phone.number)
+                newUser.set("firstName", params.firstName)
+                newUser.set("lastName", params.lastName)
+                newUser.set("gender", params.gender)
+                newUser.set("city", params.city)
+                newUser.set("country", params.country)
                 newUser.signUp(null, objects.useMasterKeyOption).then((newUser) => {
                     //created parse user, now create firebase user
                     main.firebaseAdmin.auth().createCustomToken(userInfo.id)
@@ -50,7 +55,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
             //user already exists, return
             else {
                 console.log("user already exists")
-                res.error("user already exists")
+                res.error("An account already exists with this phone number")
             }
         }, (error) => {
             console.log("error finding users " + error)
@@ -59,5 +64,30 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
     }).catch(function (error) {
         console.log("error validating token " + error)
         res.error("error getting user information " + error)
+    })
+})
+
+//method to save this user's sports details
+Parse.Cloud.define("addUserSportsDetails", function(req, res) {
+    var params = req.params
+    var userId = req.userId
+    var sports = req.sports
+    var positions = req.positions
+
+    //get this user's User object
+    var userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //add sports details for this user object
+        userObject.set("sports", sports)
+        userObject.set("positions", positions)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject)=> {
+            //saved user object, return success message
+            console.log("saved user object");
+            res.success("added sports details")
+        }, (error) => {
+            //error saving user object, return error message
+            console.log("error saving user object")
+            res.error("Error Adding Sports Details. Please try again in sometime");
+        })
     })
 })
