@@ -74,7 +74,7 @@ Parse.Cloud.define("logInUser", function (req, res) {
     var password = params.password
 
     //log user into Parse
-    Parse.User.logIn(username, password).then((loggedInUser) => {
+    Parse.User.logIn(username, password, objects.useMasterKeyOption).then((loggedInUser) => {
         //signed in user successfully, login to firebase
         main.firebaseAdmin.auth().createCustomToken(loggedInUser.id)
             .then(function (customToken) {
