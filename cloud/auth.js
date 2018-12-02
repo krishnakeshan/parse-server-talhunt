@@ -68,7 +68,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
 })
 
 //method to login user
-Parse.Cloud.define("loginUser", function (req, res) {
+Parse.Cloud.define("logInUser", function (req, res) {
     var params = req.params
     var username = params.username
     var password = params.password
