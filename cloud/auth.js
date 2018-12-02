@@ -69,6 +69,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
 
 //method to save this user's sports details
 Parse.Cloud.define("addUserSportsDetails", function(req, res) {
+    console.log("Starting addUserSportsDetails")
     var params = req.params
     var userId = req.userId
     var sports = req.sports
@@ -78,6 +79,7 @@ Parse.Cloud.define("addUserSportsDetails", function(req, res) {
     var userQuery = new Parse.Query(Parse.User)
     userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
         //add sports details for this user object
+        console.log("got user object")
         userObject.set("sports", sports)
         userObject.set("positions", positions)
         userObject.save(null, objects.useMasterKeyOption).then((savedObject)=> {
