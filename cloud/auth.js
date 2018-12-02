@@ -71,9 +71,9 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
 Parse.Cloud.define("addUserSportsDetails", function(req, res) {
     console.log("Starting addUserSportsDetails")
     var params = req.params
-    var userId = req.userId
-    var sports = req.sports
-    var positions = req.positions
+    var userId = params.userId
+    var sports = params.sports
+    var positions = params.positions
 
     //get this user's User object
     var userQuery = new Parse.Query(Parse.User)
