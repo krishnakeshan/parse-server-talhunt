@@ -33,7 +33,7 @@ Parse.Cloud.define("supportUser", function (req, res) {
   var supportObjectQuery = new Parse.Query(objects.SupportObject)
   supportObjectQuery.equalTo("from", from)
   supportObjectQuery.equalTo("to", to)
-  supportObjectQuery.find().then((supportObjects) => {
+  supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
     //got support objects, continue if no support objects exist
     if (supportObjects.length == 0) {
       //create a new Support object
