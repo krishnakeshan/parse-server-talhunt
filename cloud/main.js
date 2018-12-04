@@ -18,27 +18,81 @@ exports.firebaseStorageBucket = firebaseStorageBucket
 require("./auth")
 
 //simple test function
-Parse.Cloud.define('hello', function(req, res) {
+Parse.Cloud.define('hello', function (req, res) {
   res.success("hello defined");
 });
 
 //cloud function to let one user support another
-Parse.Cloud.define("supportUser", function(req, res) {
+Parse.Cloud.define("supportUser", function (req, res) {
   //get params
   var params = req.params
   var from = params.from
   var to = params.to
 
-  //create a new Support object
-  var newSupportObject = new objects.SupportObject()
-  newSupportObject.set("from", from)
-  newSupportObject.set("to", to)
-  newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
-    //saved support object
-    res.success("You are now supporting this user")
+  //check if this support configuration already exists
+  var supportObjectQuery = new Parse.Query(objects.SupportObject)
+  supportObjectQuery.equalTo("from", from)
+  supportObjectQuery.equalTo("to", to)
+  supportObjectQuery.find().then((supportObjects) => {
+    //got support objects, continue if no support objects exist
+    if (supportObjects.length == 0) {
+      //create a new Support object
+      var newSupportObject = new objects.SupportObject()
+      newSupportObject.set("from", from)
+      newSupportObject.set("to", to)
+      newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
+        //saved support object
+        res.success("You are now supporting this user")
+      }, (error) => {
+        //error saving support object
+        console.log("error saving support object " + error)
+        res.error("There was an error supporting this user. Please try again in sometime.");
+      })
+    }
+
+    //else abort
+    else {
+      console.log("this user already supports " + from)
+      res.error("You are already supporting this user")
+    }
   }, (error) => {
-    //error saving support object
-    console.log("error saving support object " + error)
-    res.error("There was an error supporting this user. Please try again in sometime.");
+    //error finding Support objects
+    console.log("error finding support objects " + error)
+    res.error("There was an error supporting this user. Please try again in sometime.")
+  })
+})
+
+//cloud function to let user stop supporting another user
+Parse.Cloud.define("unSupportUser", function (req, res) {
+  //get params
+  var params = req.params
+  var from = params.from
+  var to = params.to
+
+  //delete all Support objects with this configuration
+  var supportObjectQuery = new Parse.Query(objects.SupportObject)
+  supportObjectQuery.equalTo("from", from)
+  supportObjectQuery.equalTo("to", to)
+  supportObjectQuery.find().then((supportObjects) => {
+    //delete all these support objects
+    var deleted = 0
+
+    for (var i = 0; i < supportObjects.count; i++) {
+      supportObjects[i].destroy().then((destroyedObject) => {
+        //deleted this object
+        deleted += 1
+        if (deleted == supportObjects.length) {
+          res.success("You are no longer supporting this user")
+        }
+      }, (error) => {
+        //error deleting this object
+        console.log("error deleting support user " + error)
+        res.error("There was an error completing this operation. Please try again in sometime.")
+      })
+    }
+  }, (error) => {
+    //error finding support objects
+    console.log("error finding support objects " + error)
+    res.error("There was an error completing this operation. Please try again in sometime.")
   })
 })
