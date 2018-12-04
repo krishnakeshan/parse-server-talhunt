@@ -33,7 +33,7 @@ Parse.Cloud.define("supportUser", function(req, res) {
   var newSupportObject = new objects.SupportObject()
   newSupportObject.set("from", from)
   newSupportObject.set("to", to)
-  newSupportObject.save(objects.useMasterKeyOption).then((savedSupportObject) => {
+  newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
     //saved support object
     res.success("You are now supporting this user")
   }, (error) => {
