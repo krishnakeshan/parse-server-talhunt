@@ -73,23 +73,16 @@ Parse.Cloud.define("unSupportUser", function (req, res) {
   var supportObjectQuery = new Parse.Query(objects.SupportObject)
   supportObjectQuery.equalTo("from", from)
   supportObjectQuery.equalTo("to", to)
-  supportObjectQuery.find().then((supportObjects) => {
+  supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
     //delete all these support objects
-    var deleted = 0
-
-    for (var i = 0; i < supportObjects.count; i++) {
-      supportObjects[i].destroy().then((destroyedObject) => {
-        //deleted this object
-        deleted += 1
-        if (deleted == supportObjects.length) {
-          res.success("You are no longer supporting this user")
-        }
-      }, (error) => {
-        //error deleting this object
-        console.log("error deleting support user " + error)
-        res.error("There was an error completing this operation. Please try again in sometime.")
-      })
-    }
+    Parse.Object.destroyAll(supportObjects, objects.useMasterKeyOption).then((deletedSupportObjects) => {
+      //deleted all support objects
+      res.success("You are no longer supporting this user")
+    }, (error) => {
+      //error deleting support objects
+      console.log("error deleting support objects " + error)
+      res.error("There was an error completing this operation. Please try again in sometime.")
+    })
   }, (error) => {
     //error finding support objects
     console.log("error finding support objects " + error)
