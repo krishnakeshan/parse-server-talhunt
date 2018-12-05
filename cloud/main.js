@@ -4,9 +4,9 @@ const firebaseAdmin = require("firebase-admin")
 //initialize firebase admin
 var serviceAccount = require('./talhunt-222414-firebase-adminsdk-zl0gf-20f0a6a161.json')
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.cert(serviceAccount),
-  databaseURL: "https://talhunt-222414.firebaseio.com",
-  storageBucket: "talhunt-222414.appspot.com"
+    credential: firebaseAdmin.credential.cert(serviceAccount),
+    databaseURL: "https://talhunt-222414.firebaseio.com",
+    storageBucket: "talhunt-222414.appspot.com"
 })
 
 //export firebase variables for external use
@@ -20,73 +20,147 @@ require("./post")
 
 //simple test function
 Parse.Cloud.define('hello', function (req, res) {
-  res.success("hello defined");
+    res.success("hello defined");
 });
 
 //cloud function to let one user support another
 Parse.Cloud.define("supportUser", function (req, res) {
-  //get params
-  var params = req.params
-  var from = params.from
-  var to = params.to
+    //get params
+    var params = req.params
+    var from = params.from
+    var to = params.to
 
-  //check if this support configuration already exists
-  var supportObjectQuery = new Parse.Query(objects.SupportObject)
-  supportObjectQuery.equalTo("from", from)
-  supportObjectQuery.equalTo("to", to)
-  supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
-    //got support objects, continue if no support objects exist
-    if (supportObjects.length == 0) {
-      //create a new Support object
-      var newSupportObject = new objects.SupportObject()
-      newSupportObject.set("from", from)
-      newSupportObject.set("to", to)
-      newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
-        //saved support object
-        res.success("You are now supporting this user")
-      }, (error) => {
-        //error saving support object
-        console.log("error saving support object " + error)
-        res.error("There was an error supporting this user. Please try again in sometime.");
-      })
-    }
+    //check if this support configuration already exists
+    var supportObjectQuery = new Parse.Query(objects.SupportObject)
+    supportObjectQuery.equalTo("from", from)
+    supportObjectQuery.equalTo("to", to)
+    supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
+        //got support objects, continue if no support objects exist
+        if (supportObjects.length == 0) {
+            //create a new Support object
+            var newSupportObject = new objects.SupportObject()
+            newSupportObject.set("from", from)
+            newSupportObject.set("to", to)
+            newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
+                //saved support object
+                res.success("You are now supporting this user")
+            }, (error) => {
+                //error saving support object
+                console.log("error saving support object " + error)
+                res.error("There was an error supporting this user. Please try again in sometime.");
+            })
+        }
 
-    //else abort
-    else {
-      console.log("this user already supports " + from)
-      res.error("You are already supporting this user")
-    }
-  }, (error) => {
-    //error finding Support objects
-    console.log("error finding support objects " + error)
-    res.error("There was an error supporting this user. Please try again in sometime.")
-  })
+        //else abort
+        else {
+            console.log("this user already supports " + from)
+            res.error("You are already supporting this user")
+        }
+    }, (error) => {
+        //error finding Support objects
+        console.log("error finding support objects " + error)
+        res.error("There was an error supporting this user. Please try again in sometime.")
+    })
 })
 
 //cloud function to let user stop supporting another user
 Parse.Cloud.define("unSupportUser", function (req, res) {
-  //get params
-  var params = req.params
-  var from = params.from
-  var to = params.to
+    //get params
+    var params = req.params
+    var from = params.from
+    var to = params.to
 
-  //delete all Support objects with this configuration
-  var supportObjectQuery = new Parse.Query(objects.SupportObject)
-  supportObjectQuery.equalTo("from", from)
-  supportObjectQuery.equalTo("to", to)
-  supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
-    //delete all these support objects
-    Parse.Object.destroyAll(supportObjects, objects.useMasterKeyOption).then((deletedSupportObjects) => {
-      //deleted all support objects
-      res.success("You are no longer supporting this user")
+    //delete all Support objects with this configuration
+    var supportObjectQuery = new Parse.Query(objects.SupportObject)
+    supportObjectQuery.equalTo("from", from)
+    supportObjectQuery.equalTo("to", to)
+    supportObjectQuery.find(objects.useMasterKeyOption).then((supportObjects) => {
+        //delete all these support objects
+        Parse.Object.destroyAll(supportObjects, objects.useMasterKeyOption).then((deletedSupportObjects) => {
+            //deleted all support objects
+            res.success("You are no longer supporting this user")
+        }, (error) => {
+            //error deleting support objects
+            console.log("error deleting support objects " + error)
+            res.error("There was an error completing this operation. Please try again in sometime.")
+        })
     }, (error) => {
-      //error deleting support objects
-      console.log("error deleting support objects " + error)
-      res.error("There was an error completing this operation. Please try again in sometime.")
+        //error finding support objects
+        console.log("error finding support objects " + error)
+        res.error("There was an error completing this operation. Please try again in sometime.")
     })
-  }, (error) => {
-    //error finding support objects
-    console.log("error finding support objects " + error)
-    res.error("There was an error completing this operation. Please try again in sometime.")
-  })
+})
+
+//afterSave trigger for Support objects
+Parse.Cloud.afterSave("Support", function (req, res) {
+    //find and increment support and supporting on both user objects
+    var fromUserId = req.object.get("from")
+    var toUserId = req.object.get("to")
+
+    var fromUserQuery = new Parse.Query(Parse.User)
+    fromUserQuery.get(fromUserId, objects.useMasterKeyOption).then((fromUserObject) => {
+        //got "from" user object, now get "to" user object
+        var toUserQuery = new Parse.Query(Parse.User)
+        toUserQuery.get(toUserId, objects.useMasterKeyOption).then((toUserObject) => {
+            //got both "to" and "from" users, now change support values
+            var currentSupport = toUserObject.get("support"), currentSupporting = fromUserObject.get("supporting")
+            toUserObject.set("support", (currentSupport+1))
+            fromUserObject.set("supporting", (currentSupporting+1))
+            
+            //save both objects
+            Parse.Object.saveAll([fromUserObject, toUserObject], objects.useMasterKeyOption).then((savedUserObjects) => {
+                //saved user objects, return successfully
+                res.success("support updated")
+            }, (error) => {
+                //error saving user objects
+                console.log("error saving user objects " + error)
+                res.error("error saving user objects")
+            })
+        }, (error) => {
+            //error getting to user object
+            console.log("error getting to user object " + error)
+            res.error("error getting to user object " + error)
+        })
+    }, (error) => {
+        //error getting from user object
+        console.log("error getting from user object " + error)
+        res.error("error getting from user object")
+    })
+})
+
+//afterDelete trigger for Support objects
+Parse.Cloud.afterDelete("Support", function (req, res) {
+    //find and increment support and supporting on both user objects
+    var fromUserId = req.object.get("from")
+    var toUserId = req.object.get("to")
+
+    var fromUserQuery = new Parse.Query(Parse.User)
+    fromUserQuery.get(fromUserId, objects.useMasterKeyOption).then((fromUserObject) => {
+        //got "from" user object, now get "to" user object
+        var toUserQuery = new Parse.Query(Parse.User)
+        toUserQuery.get(toUserId, objects.useMasterKeyOption).then((toUserObject) => {
+            //got both "to" and "from" users, now change support values
+            var currentSupport = toUserObject.get("support"), currentSupporting = fromUserObject.get("supporting")
+            toUserObject.set("support", (currentSupport-1))
+            fromUserObject.set("supporting", (currentSupporting-1))
+            
+            //save both objects
+            Parse.Object.saveAll([fromUserObject, toUserObject], objects.useMasterKeyOption).then((savedUserObjects) => {
+                //saved user objects, return successfully
+                res.success("support updated")
+            }, (error) => {
+                //error saving user objects
+                console.log("error saving user objects " + error)
+                res.error("error saving user objects")
+            })
+        }, (error) => {
+            //error getting to user object
+            console.log("error getting to user object " + error)
+            res.error("error getting to user object " + error)
+        })
+    }, (error) => {
+        //error getting from user object
+        console.log("error getting from user object " + error)
+        res.error("error getting from user object")
+    })
 })
