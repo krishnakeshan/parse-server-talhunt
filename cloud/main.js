@@ -93,28 +93,37 @@ Parse.Cloud.define("unSupportUser", function (req, res) {
 
 //afterSave trigger for Support objects
 Parse.Cloud.afterSave("Support", function (req, res) {
-    //find and increment support and supporting on both user objects
+    //get ids of "from" and "to" users
     var fromUserId = req.object.get("from")
     var toUserId = req.object.get("to")
 
+    //get "from" user
     var fromUserQuery = new Parse.Query(Parse.User)
     fromUserQuery.get(fromUserId, objects.useMasterKeyOption).then((fromUserObject) => {
         //got "from" user object, now get "to" user object
         var toUserQuery = new Parse.Query(Parse.User)
         toUserQuery.get(toUserId, objects.useMasterKeyOption).then((toUserObject) => {
             //got both "to" and "from" users, now change support values
-            var currentSupport = toUserObject.get("support"), currentSupporting = fromUserObject.get("supporting")
-            toUserObject.set("support", (currentSupport+1))
-            fromUserObject.set("supporting", (currentSupporting+1))
-            
-            //save both objects
-            Parse.Object.saveAll([fromUserObject, toUserObject], objects.useMasterKeyOption).then((savedUserObjects) => {
-                //saved user objects, return successfully
-                res.success("support updated")
+            var currentSupport = toUserObject.get("support"),
+                currentSupporting = fromUserObject.get("supporting")
+            toUserObject.set("support", (currentSupport + 1))
+            fromUserObject.set("supporting", (currentSupporting + 1))
+
+            //save "to" user object
+            toUserObject.save(null, objects.useMasterKeyOption).then((savedToUserObject) => {
+                //saved "to" user object, now save "from" user object
+                fromUserObject.save(null, objects.useMasterKeyOption).then((savedFromUserObject) => {
+                    //saved "from" user object
+                    res.success("support updated")
+                }, (error) => {
+                    //error saving "from" user object
+                    console.log("error saving from user object " + error)
+                    res.error()
+                })
             }, (error) => {
-                //error saving user objects
-                console.log("error saving user objects " + error)
-                res.error("error saving user objects")
+                //error saving "to" user object
+                console.log("error saving to user object " + error)
+                res.error("error saving to user object")
             })
         }, (error) => {
             //error getting to user object
@@ -140,10 +149,11 @@ Parse.Cloud.afterDelete("Support", function (req, res) {
         var toUserQuery = new Parse.Query(Parse.User)
         toUserQuery.get(toUserId, objects.useMasterKeyOption).then((toUserObject) => {
             //got both "to" and "from" users, now change support values
-            var currentSupport = toUserObject.get("support"), currentSupporting = fromUserObject.get("supporting")
-            toUserObject.set("support", (currentSupport-1))
-            fromUserObject.set("supporting", (currentSupporting-1))
-            
+            var currentSupport = toUserObject.get("support"),
+                currentSupporting = fromUserObject.get("supporting")
+            toUserObject.set("support", (currentSupport - 1))
+            fromUserObject.set("supporting", (currentSupporting - 1))
+
             //save both objects
             Parse.Object.saveAll([fromUserObject, toUserObject], objects.useMasterKeyOption).then((savedUserObjects) => {
                 //saved user objects, return successfully
