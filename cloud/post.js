@@ -15,9 +15,9 @@ Parse.Cloud.define("createPost", function(req, res) {
     var newPost = new objects.PostObject()
     newPost.set("from", from)
     newPost.set("content", content)
-    newPost.set("type", postType)
-    newPost.set("secondaryType", postSecondaryType)
-    newPost.set("uuid", postUUID)
+    newPost.set("type", type)
+    newPost.set("secondaryType", secondaryType)
+    newPost.set("uuid", uuid)
     newPost.save(null, objects.useMasterKeyOption).then((savedPostObject) => {
         //saved post object
         res.success("Post Published")
