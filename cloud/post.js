@@ -5,9 +5,9 @@ const main = require("./main")
 Parse.Cloud.define("createPost", function(req, res) {
     //get params
     var params = req.params
-    var postType = params.postType
-    var postSecondaryType = params.postSecondaryType
-    var postUUID = params.postUUID
+    var type = params.postType
+    var secondaryType = params.postSecondaryType
+    var uuid = params.postUUID
     var content = params.content
     var from = params.from
 
@@ -15,9 +15,9 @@ Parse.Cloud.define("createPost", function(req, res) {
     var newPost = new objects.PostObject()
     newPost.set("from", from)
     newPost.set("content", content)
-    newPost.set("postType", postType)
-    newPost.set("postSecondaryType", postSecondaryType)
-    newPost.set("postUUID", postUUID)
+    newPost.set("type", postType)
+    newPost.set("secondaryType", postSecondaryType)
+    newPost.set("uuid", postUUID)
     newPost.save(null, objects.useMasterKeyOption).then((savedPostObject) => {
         //saved post object
         res.success("Post Published")
