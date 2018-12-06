@@ -94,3 +94,33 @@ Parse.Cloud.define("unStarPost", function(req, res) {
         res.error("error getting post object " + error)
     })
 })
+
+//method to recommend this post to someone
+Parse.Cloud.define("recommendPost", function(req, res) {
+
+})
+
+//method to publish a post comment
+Parse.Cloud.define("postComment", function(req, res) {
+    //get params
+    var params = req.params
+    var post = params.post
+    var from = params.from
+    var fromName = params.fromName
+    var comment = params.comment
+
+    //create PostComment object
+    var newComment = new objects.PostCommentObject()
+    newComment.set("post", post)
+    newComment.set("from", from)
+    newComment.set("fromName", fromName)
+    newComment.set("comment", comment)
+    newComment.save(null, objects.useMasterKeyOption).then((savedComment) => {
+        //saved comment
+        res.success("comment saved")
+    }, (error) => {
+        //error saving comment
+        console.error("error saving comment " + error)
+        res.error("error saving comment " + error)
+    })
+})
