@@ -22,6 +22,10 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
         userQuery.equalTo("facebookId", userInfo.id)
         userQuery.find(objects.useMasterKeyOption).then((users) => {
             if (users.length == 0) {
+                //setup name and nameLowerCase variables
+                var name = params.firstName + " " + params.lastName
+                var nameLowerCase = name.toLowerCase()
+
                 //user doesn't exist, create new
                 var newUser = new Parse.User()
                 newUser.set("username", userInfo.phone.national_number)
@@ -30,6 +34,8 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
                 newUser.set("phone", userInfo.phone.number)
                 newUser.set("firstName", params.firstName)
                 newUser.set("lastName", params.lastName)
+                newUser.set("name", name)
+                newUser.set("nameLowerCase", nameLowerCase)
                 newUser.set("gender", params.gender)
                 newUser.set("city", params.city)
                 newUser.set("country", params.country)
