@@ -108,7 +108,7 @@ Parse.Cloud.define("recommendPost", function(req, res) {
     newRecommendation.set("from", from)
     newRecommendation.set("to", to)
     newRecommendation.set("post", post)
-    newRecommendation.save(null, objects.RecommendationObject).then((savedObject) => {
+    newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved recommendation object
         res.success("post recommended")
     }, (error) => {
