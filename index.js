@@ -41,7 +41,7 @@ publicIP.v4().then(ip => {
     allowClientClassCreation: false,
     enableAnonymousUsers: false,
     liveQuery: {
-      classNames: ["Posts", "Comments"] // List of classes to support for query subscriptions
+      classNames: ["ChatMessage", "Posts", "Comments"] // List of classes to support for query subscriptions
     }
   });
 
