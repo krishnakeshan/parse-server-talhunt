@@ -112,6 +112,8 @@ Parse.Cloud.define("recommendPost", function(req, res) {
         //saved recommendation object, now create notification object
         var newNotification = new objects.NotificationObject()
         newNotification.set("for", to)
+        newNotification.set("from", from)
+        newNotification.set("content", post)
         newNotification.set("type", objects.notificationTypeRecommendation)
         newNotification.set("seen", false)
         newNotification.save(null, objects.useMasterKeyOption).then((savedObject) => {
