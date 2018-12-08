@@ -17,6 +17,7 @@ exports.firebaseStorageBucket = firebaseStorageBucket
 //require code from other files
 require("./auth")
 require("./post")
+require("./chat")
 
 //simple test function
 Parse.Cloud.define('hello', function (req, res) {
