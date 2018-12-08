@@ -109,8 +109,19 @@ Parse.Cloud.define("recommendPost", function(req, res) {
     newRecommendation.set("to", to)
     newRecommendation.set("post", post)
     newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
-        //saved recommendation object
-        res.success("post recommended")
+        //saved recommendation object, now create notification object
+        var newNotification = new objects.NotificationObject()
+        newNotification.set("for", to)
+        newNotification.set("type", objects.notificationTypeRecommendation)
+        newNotification.set("seen", false)
+        newNotification.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved notification object
+            res.success("recommendation successful")
+        }, (error) => {
+            //error saving notification object
+            console.log("error saving notification object " + error)
+            res.error("error saving notification object " + error)
+        })
     }, (error) => {
         //error saving recommendation object
         console.log("error saving recommendation object " + error)

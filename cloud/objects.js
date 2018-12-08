@@ -6,7 +6,11 @@ exports.facebookAppId = "2196060427333447"
 exports.PostObject = Parse.Object.extend("Post")
 exports.SupportObject = Parse.Object.extend("Support")
 exports.RecommendationObject = Parse.Object.extend("Recommendation")
+exports.NotificationObject = Parse.Object.extend("Notification")
 exports.PostCommentObject = Parse.Object.extend("PostComment")
+
+//constants
+exports.notificationTypeRecommendation = "recommendationNotification"
 
 //options object for using master key
 exports.useMasterKeyOption = {
