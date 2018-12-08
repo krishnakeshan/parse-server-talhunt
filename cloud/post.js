@@ -97,7 +97,25 @@ Parse.Cloud.define("unStarPost", function(req, res) {
 
 //method to recommend this post to someone
 Parse.Cloud.define("recommendPost", function(req, res) {
+    //get params
+    var params = req.params
+    var from = params.from
+    var to = params.to
+    var post = params.post
 
+    //created a Recommendation object with these params
+    var newRecommendation = new objects.RecommendationObject()
+    newRecommendation.set("from", from)
+    newRecommendation.set("to", to)
+    newRecommendation.set("post", post)
+    newRecommendation.save(null, objects.RecommendationObject).then((savedObject) => {
+        //saved recommendation object
+        res.success("post recommended")
+    }, (error) => {
+        //error saving recommendation object
+        console.log("error saving recommendation object " + error)
+        res.error("error saving recommendation object " + error)
+    })
 })
 
 //method to publish a post comment
