@@ -103,6 +103,31 @@ Parse.Cloud.define("logInUser", function (req, res) {
     })
 })
 
+//method to update coach type
+Parse.Cloud.define("updateCoachType", function(req, res) {
+    var params = req.params
+    var userId = params.userId
+    var coachType = params.coachType
+
+    //get user object
+    var userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //got user object, save coach type
+        userObject.set("coachType", coachType).save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object, return
+            res.success("saved")
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.error("error saving user object " + error)
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error getting user object " + error)
+    })
+})
+
 //method to save this user's sports details
 Parse.Cloud.define("addUserSportsDetails", function (req, res) {
     console.log("Starting addUserSportsDetails")
