@@ -13,6 +13,8 @@ exports.PostCommentObject = Parse.Object.extend("PostComment")
 
 //constants
 exports.notificationTypeRecommendation = "recommendationNotification"
+exports.notificationTypeStar = "starNotification"
+exports.notificationTypeComment = "commentNotification"
 
 //options object for using master key
 exports.useMasterKeyOption = {

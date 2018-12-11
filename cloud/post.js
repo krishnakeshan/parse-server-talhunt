@@ -48,6 +48,14 @@ Parse.Cloud.define("starPost", function(req, res) {
             postObject.set("stars", stars)
             postObject.set("starCount", starCount)
             postObject.save(null, objects.useMasterKeyOption).then((savedPost) => {
+                //post saved, create a new notification
+                var newNotification = new objects.NotificationObject()
+                newNotification.set("from", userId)
+                newNotification.set("for", postObject.get("from"))
+                newNotification.set("type", objects.notificationTypeStar)
+                newNotification.set("seen", false)
+                newNotification.set("content", postId)
+                newNotification.save(null, objects.useMasterKeyOption)
                 res.success("post saved")
             }, (error) => {
                 //error saving post

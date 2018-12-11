@@ -18,6 +18,7 @@ exports.firebaseStorageBucket = firebaseStorageBucket
 require("./auth")
 require("./post")
 require("./chat")
+require("./notifications.js")
 
 //simple test function
 Parse.Cloud.define('hello', function (req, res) {
