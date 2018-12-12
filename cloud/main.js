@@ -176,3 +176,31 @@ Parse.Cloud.afterDelete("Support", function (req, res) {
         res.error("error getting from user object")
     })
 })
+
+//method to save a user's skills
+Parse.Cloud.define("saveUserSkills", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var skillType = params.skillType
+    var skills = params.skills
+
+    //get user object
+    var userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //got user object, save skills
+        userObject.set(skillType, skills)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object, return
+            res.success("saved")
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.error("error saving user object " + error)
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error getting user object " + error)
+    })
+})
