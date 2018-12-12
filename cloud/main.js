@@ -204,3 +204,32 @@ Parse.Cloud.define("saveUserSkills", function (req, res) {
         res.error("error getting user object " + error)
     })
 })
+
+//method to save a user's favourites
+//method to save a user's skills
+Parse.Cloud.define("saveUserFavourites", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var favouriteType = params.favouriteType
+    var favourites = params.favourites
+
+    //get user object
+    var userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //got user object, save skills
+        userObject.set(favouriteType, favourites)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object, return
+            res.success("saved")
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.error("error saving user object " + error)
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error getting user object " + error)
+    })
+})
