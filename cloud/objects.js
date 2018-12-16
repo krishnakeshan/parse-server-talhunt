@@ -1,6 +1,6 @@
 //facebook stuff
 exports.facebookAPIBaseURL = "https://graph.accountkit.com/v1.3/me/"
-exports.facebookAppId = "2196060427333447"
+exports.facebookAppId = "803592549993621"
 
 //Parse objects
 exports.PostObject = Parse.Object.extend("Post")
