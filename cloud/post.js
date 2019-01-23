@@ -2,7 +2,7 @@ const objects = require("./objects")
 const main = require("./main")
 
 //function to create a post
-Parse.Cloud.define("createPost", function(req, res) {
+Parse.Cloud.define("createPost", function (req, res) {
     //get params
     var params = req.params
     var type = params.postType
@@ -10,6 +10,7 @@ Parse.Cloud.define("createPost", function(req, res) {
     var uuid = params.postUUID
     var content = params.content
     var from = params.from
+    var recommendTo = params.recommendTo
 
     //create Post object
     var newPost = new objects.PostObject()
@@ -21,8 +22,20 @@ Parse.Cloud.define("createPost", function(req, res) {
     newPost.set("stars", [])
     newPost.set("starCount", 0)
     newPost.save(null, objects.useMasterKeyOption).then((savedPostObject) => {
-        //saved post object
-        res.success("Post Published")
+        //saved post object, now create recommendation object
+        var newRecommendation = new objects.RecommendationObject()
+        newRecommendation.set("from", from)
+        newRecommendation.set("to", recommendTo)
+        newRecommendation.set("post", savedPostObject.id)
+        newRecommendation.set("count", 1)
+        newRecommendation.save(null, objects.useMasterKeyOption).then((savedRecommendation) => {
+            //created recommendation object, return successfully
+            res.success("Post Published")
+        }, (error) => {
+            //error creating recommendation object
+            console.log("error creating recommendation object " + error)
+            res.error("error creating recommendation object")
+        })
     }, (error) => {
         //error saving post object
         console.log("error saving post object " + error)
@@ -31,7 +44,7 @@ Parse.Cloud.define("createPost", function(req, res) {
 })
 
 //function to star this post
-Parse.Cloud.define("starPost", function(req, res) {
+Parse.Cloud.define("starPost", function (req, res) {
     //get params
     var params = req.params
     var postId = params.postId
@@ -42,7 +55,8 @@ Parse.Cloud.define("starPost", function(req, res) {
     postQuery.get(postId, objects.useMasterKeyOption).then((postObject) => {
         //got post object, add this user's star if not already added
         if (!postObject.get("stars").includes(userId)) {
-            var stars = postObject.get("stars"), starCount = postObject.get("starCount")
+            var stars = postObject.get("stars"),
+                starCount = postObject.get("starCount")
             stars.push(userId)
             starCount += 1
             postObject.set("stars", stars)
@@ -71,7 +85,7 @@ Parse.Cloud.define("starPost", function(req, res) {
 })
 
 //function to un-star this post
-Parse.Cloud.define("unStarPost", function(req, res) {
+Parse.Cloud.define("unStarPost", function (req, res) {
     //get params
     var params = req.params
     var postId = params.postId
@@ -82,7 +96,8 @@ Parse.Cloud.define("unStarPost", function(req, res) {
     postQuery.get(postId, objects.useMasterKeyOption).then((postObject) => {
         //got post object, add this user's star if not already added
         if (postObject.get("stars").includes(userId)) {
-            var stars = postObject.get("stars"), starCount = postObject.get("starCount")
+            var stars = postObject.get("stars"),
+                starCount = postObject.get("starCount")
             var index = stars.indexOf(userId)
             stars.splice(index, 1)
             starCount -= 1
@@ -104,7 +119,7 @@ Parse.Cloud.define("unStarPost", function(req, res) {
 })
 
 //method to recommend this post to someone
-Parse.Cloud.define("recommendPost", function(req, res) {
+Parse.Cloud.define("recommendPost", function (req, res) {
     //get params
     var params = req.params
     var from = params.from
@@ -140,7 +155,7 @@ Parse.Cloud.define("recommendPost", function(req, res) {
 })
 
 //method to publish a post comment
-Parse.Cloud.define("postComment", function(req, res) {
+Parse.Cloud.define("postComment", function (req, res) {
     //get params
     var params = req.params
     var post = params.post
