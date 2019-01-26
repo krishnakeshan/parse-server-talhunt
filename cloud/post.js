@@ -154,6 +154,11 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     })
 })
 
+//method to increment the top recommendation
+Parse.Cloud.define("incrementTopRecommendation", function (req, res) {
+
+})
+
 //method to publish a post comment
 Parse.Cloud.define("postComment", function (req, res) {
     //get params
