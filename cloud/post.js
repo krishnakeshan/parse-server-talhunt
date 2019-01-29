@@ -62,14 +62,7 @@ Parse.Cloud.define("starPost", function (req, res) {
             postObject.set("stars", stars)
             postObject.set("starCount", starCount)
             postObject.save(null, objects.useMasterKeyOption).then((savedPost) => {
-                //post saved, create a new notification
-                var newNotification = new objects.NotificationObject()
-                newNotification.set("from", userId)
-                newNotification.set("for", postObject.get("from"))
-                newNotification.set("type", objects.notificationTypeStar)
-                newNotification.set("seen", false)
-                newNotification.set("content", postId)
-                newNotification.save(null, objects.useMasterKeyOption)
+                //post saved, return
                 res.success("post saved")
             }, (error) => {
                 //error saving post
@@ -133,20 +126,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     newRecommendation.set("post", post)
     newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved recommendation object, now create notification object
-        var newNotification = new objects.NotificationObject()
-        newNotification.set("for", to)
-        newNotification.set("from", from)
-        newNotification.set("content", post)
-        newNotification.set("type", objects.notificationTypeRecommendation)
-        newNotification.set("seen", false)
-        newNotification.save(null, objects.useMasterKeyOption).then((savedObject) => {
-            //saved notification object
-            res.success("recommendation successful")
-        }, (error) => {
-            //error saving notification object
-            console.log("error saving notification object " + error)
-            res.error("error saving notification object " + error)
-        })
+        res.success("recommendation successful")
     }, (error) => {
         //error saving recommendation object
         console.log("error saving recommendation object " + error)
