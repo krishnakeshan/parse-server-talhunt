@@ -1,7 +1,7 @@
 const objects = require("./objects")
 
 //method to create a ChatObject
-Parse.Cloud.define("createChatObject", function(req, res) {
+Parse.Cloud.define("createChatObject", function (req, res) {
     //get params
     var params = req.params
     var user1 = params.user1
@@ -26,16 +26,18 @@ Parse.Cloud.define("createChatObject", function(req, res) {
 })
 
 //method to send chat message
-Parse.Cloud.define("sendChatMessage", function(req, res) {
+Parse.Cloud.define("sendChatMessage", function (req, res) {
     //get params
     var params = req.params
     var from = params.from
+    var forId = params.for
     var chat = params.chat
     var message = params.message
 
     //create ChatMessage object
     var newChatMessage = new objects.ChatMessageObject()
     newChatMessage.set("from", from)
+    newChatMessage.set("for", forId)
     newChatMessage.set("chat", chat)
     newChatMessage.set("message", message)
     newChatMessage.save(null, objects.useMasterKeyOption).then((savedObject) => {
