@@ -270,3 +270,22 @@ Parse.Cloud.define("saveUserSubSports", function (req, res) {
     //saved subsports for this user, return
     return true
 })
+
+//methods to save a user's selected positions
+Parse.Cloud.define("saveUserPositions", function (req, res) {
+    //get params
+    var params = req.params
+    var positions = params.positions
+    var userId = params.userId
+
+    //get user object
+    const userQuery = new Parse.Query(Parse.User)
+    var userObject = await userQuery.get(userId)
+
+    //got user object, now overwrite 'positions' field
+    userObject.set('positions', positions)
+    await userObject.save()
+
+    //return
+    return true
+})
