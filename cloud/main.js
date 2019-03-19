@@ -456,3 +456,37 @@ Parse.Cloud.define("saveUserSkills", function (req, res) {
         res.error("error getting user skill objects")
     })
 })
+
+//method to save user's favourites
+Parse.Cloud.define("saveUserFavourites", function (req, res) {
+    //get params
+    var params = req.params
+    var favouritesId = params.favouritesId
+    var players = params.players
+    var teams = params.teams
+
+    //get UserFavourites object
+    const favouritesQuery = new Parse.Query(objects.UserFavouritesObject)
+    favouritesQuery.get(favouritesId, objects.useMasterKeyOption).then((favouritesObject) => {
+        //got favourites object
+        console.log("got favourites object")
+
+        //set fields
+        favouritesObject.set("players", players)
+        favouritesObject.set("teams", teams)
+
+        //save
+        favouritesObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved favourites
+            res.success("saved favourites")
+        }, (error) => {
+            //error saving favourites object
+            console.log("error saving favourites " + error)
+            res.error("error saving favourites")
+        })
+    }, (error) => {
+        //error getting favourites object
+        console.log("error getting favourites object " + error)
+        res.error("error getting favourites object")
+    })
+})
