@@ -323,7 +323,7 @@ Parse.Cloud.define("saveUserSkills", function (req, res) {
     var secondSkills = params.secondSkills
 
     //get UserSkill object
-    var userSkillsQuery = Parse.Query(objects.UserSkillsObject)
+    var userSkillsQuery = new Parse.Query(objects.UserSkillsObject)
     userSkillsQuery.equalTo("userId", userId)
     userSkillsQuery.equalTo("sport", sportId)
     userSkillsQuery.find().then((userSkillObjects) => {
