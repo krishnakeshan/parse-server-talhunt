@@ -12,7 +12,7 @@ Parse.Cloud.define("createChatObject", function (req, res) {
     //create chat object
     var newChatObject = new objects.ChatObject()
     newChatObject.set("user1", user1)
-    newChatObject.set("user1Name", user1)
+    newChatObject.set("user1Name", user1Name)
     newChatObject.set("user2", user2)
     newChatObject.set("user2Name", user2Name)
     newChatObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
@@ -30,7 +30,7 @@ Parse.Cloud.define("sendChatMessage", function (req, res) {
     //get params
     var params = req.params
     var from = params.from
-    var forId = params.for
+    var forId = params.forId
     var chat = params.chat
     var message = params.message
 

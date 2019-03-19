@@ -134,9 +134,28 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     })
 })
 
-//method to increment the top recommendation
-Parse.Cloud.define("incrementTopRecommendation", function (req, res) {
+//method to increment top recommendation for this post
+Parse.Cloud.define("incrementRecommendation", async (req) => {
+    //get params
+    var params = req.params
+    var recommendationId = params.recommendationId
+    var userId = params.userId
 
+    //get recommendation object
+    const recommendationQuery = Parse.Query("Recommendation")
+    var recommendationObject = await recommendationQuery.get(recommendationId)
+
+    //get list of supporters
+    var supporters = recommendationObject.get("support")
+    if (!supporters.includes(userId)) {
+        supporters.push(userId)
+    }
+
+    //save changes
+    recommendationObject.set("support", supporters)
+    await recommendationObject.save()
+
+    return true
 })
 
 //method to publish a post comment

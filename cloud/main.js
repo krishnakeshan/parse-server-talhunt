@@ -289,3 +289,29 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
     //return
     return true
 })
+
+//method to save a user's skills
+Parse.Cloud.define("saveUserSkills", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var firstSkills = params.firstSkills
+    var secondSkills = params.secondSkills
+
+    //get user
+    var userQuery = Parse.Query(Parse.User)
+    userQuery.get(userId).then((userObject) => {
+        //got user object
+        userObject.set("developedSkills", firstSkills)
+        userObject.set("developingSkills", secondSkills)
+        userObject.save(null, objects.useMasterKeyOption).then((savedUser) => {
+            //saved user skills
+            console.log("saved user skills");
+            res.success("saved user skills");
+        }, (error) => {
+            //error saving user skills
+            console.log("error saving user skills " + error);
+            res.error("error saving user skills");
+        })
+    })
+})
