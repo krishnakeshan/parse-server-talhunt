@@ -331,7 +331,7 @@ Parse.Cloud.define("addUserSkill", function (req, res) {
         var skillsArray = []
 
         //get appropriate skills array
-        if (skillNo == 0) {
+        if (skillNo == "first") {
             skillsArray = userSkillsObject.get("firstSkills")
         } else {
             skillsArray = userSkillsObject.get("secondSkills")
@@ -342,7 +342,7 @@ Parse.Cloud.define("addUserSkill", function (req, res) {
             skillsArray.push(skillId)
 
             //save userSkills object
-            if (skillNo == 0) {
+            if (skillNo == "first") {
                 userSkillsObject.set("firstSkills", skillsArray)
             } else {
                 userSkillsObject.set("secondSkills", skillsArray)
