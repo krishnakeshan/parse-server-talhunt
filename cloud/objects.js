@@ -10,6 +10,7 @@ exports.SupportObject = Parse.Object.extend("Support")
 exports.RecommendationObject = Parse.Object.extend("Recommendation")
 exports.NotificationObject = Parse.Object.extend("Notification")
 exports.PostCommentObject = Parse.Object.extend("PostComment")
+exports.UserSkillObject = Parse.Object.extend("UserSkill")
 
 //constants
 exports.notificationTypeRecommendation = "recommendationNotification"

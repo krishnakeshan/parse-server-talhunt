@@ -178,63 +178,63 @@ Parse.Cloud.afterDelete("Support", function (req, res) {
 })
 
 //method to save a user's skills
-Parse.Cloud.define("saveUserSkills", function (req, res) {
-    //get params
-    var params = req.params
-    var userId = params.userId
-    var skillType = params.skillType
-    var skills = params.skills
+// Parse.Cloud.define("saveUserSkills", function (req, res) {
+//     //get params
+//     var params = req.params
+//     var userId = params.userId
+//     var skillType = params.skillType
+//     var skills = params.skills
 
-    //get user object
-    var userQuery = new Parse.Query(Parse.User)
-    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
-        //got user object, save skills
-        userObject.set(skillType, skills)
-        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
-            //saved user object, return
-            res.success("saved")
-        }, (error) => {
-            //error saving user object
-            console.log("error saving user object " + error)
-            res.error("error saving user object " + error)
-        })
-    }, (error) => {
-        //error getting user object
-        console.log("error getting user object " + error)
-        res.error("error getting user object " + error)
-    })
-})
+//     //get user object
+//     var userQuery = new Parse.Query(Parse.User)
+//     userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+//         //got user object, save skills
+//         userObject.set(skillType, skills)
+//         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+//             //saved user object, return
+//             res.success("saved")
+//         }, (error) => {
+//             //error saving user object
+//             console.log("error saving user object " + error)
+//             res.error("error saving user object " + error)
+//         })
+//     }, (error) => {
+//         //error getting user object
+//         console.log("error getting user object " + error)
+//         res.error("error getting user object " + error)
+//     })
+// })
 
 //method to save a user's favourites
-Parse.Cloud.define("saveUserFavourites", function (req, res) {
-    //get params
-    var params = req.params
-    var userId = params.userId
-    var favouriteType = params.favouriteType
-    var favourites = params.favourites
+// Parse.Cloud.define("saveUserFavourites", function (req, res) {
+//     //get params
+//     var params = req.params
+//     var userId = params.userId
+//     var favouriteType = params.favouriteType
+//     var favourites = params.favourites
 
-    //get user object
-    var userQuery = new Parse.Query(Parse.User)
-    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
-        //got user object, save skills
-        userObject.set(favouriteType, favourites)
-        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
-            //saved user object, return
-            res.success("saved")
-        }, (error) => {
-            //error saving user object
-            console.log("error saving user object " + error)
-            res.error("error saving user object " + error)
-        })
-    }, (error) => {
-        //error getting user object
-        console.log("error getting user object " + error)
-        res.error("error getting user object " + error)
-    })
-})
+//     //get user object
+//     var userQuery = new Parse.Query(Parse.User)
+//     userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+//         //got user object, save skills
+//         userObject.set(favouriteType, favourites)
+//         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+//             //saved user object, return
+//             res.success("saved")
+//         }, (error) => {
+//             //error saving user object
+//             console.log("error saving user object " + error)
+//             res.error("error saving user object " + error)
+//         })
+//     }, (error) => {
+//         //error getting user object
+//         console.log("error getting user object " + error)
+//         res.error("error getting user object " + error)
+//     })
+// })
 
 //method to save a user's sports
-Parse.Cloud.define("saveUserSports", async (req) => {
+Parse.Cloud.define("saveUserSports", function (req, res) {
     //get params
     var params = req.params
     var sports = params.sports
@@ -242,18 +242,22 @@ Parse.Cloud.define("saveUserSports", async (req) => {
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
-    var userObject = await userQuery.get(userId)
-
-    //got user object, now overwrite 'sports' field with this value
-    userObject.set('sports', sports);
-    await userObject.save()
-
-    //saved sports for this user, return
-    return true
+    userQuery.get(userId).then((userObject) => {
+        //got user object
+        userObject.set("sports", sports);
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            console.log("saved user sports")
+            res.success("saved user sports")
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error saving user object")
+    })
 })
 
 //method to save a user's subSports
-Parse.Cloud.define("saveUserSubSports", async (req) => {
+Parse.Cloud.define("saveUserSubSports", function (req, res) {
     //get params
     var params = req.params
     var subSports = params.subSports
@@ -261,18 +265,27 @@ Parse.Cloud.define("saveUserSubSports", async (req) => {
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
-    var userObject = await userQuery.get(userId)
-
-    //got user object, now overwrite 'subSports' field
-    userObject.set('subSports', subSports)
-    await userObject.save()
-
-    //saved subsports for this user, return
-    return true
+    userQuery.get(userId).then((userObject) => {
+        //got user object, override sports field and save
+        userObject.set("subSports", subSports)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object
+            console.log("saved user object")
+            res.success("saved user object")
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.error("error saving user object")
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error getting user object")
+    })
 })
 
 //methods to save a user's selected positions
-Parse.Cloud.define("saveUserPositions", async (req) => {
+Parse.Cloud.define("saveUserPositions", function (req, res) {
     //get params
     var params = req.params
     var positions = params.positions
@@ -280,14 +293,24 @@ Parse.Cloud.define("saveUserPositions", async (req) => {
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
-    var userObject = await userQuery.get(userId)
-
-    //got user object, now overwrite 'positions' field
-    userObject.set('positions', positions)
-    await userObject.save()
-
-    //return
-    return true
+    userQuery.get(userId).then((userObject) => {
+        //got user object
+        console.log("got user object")
+        userObject.set("positions", positions)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object
+            console.log("saved user object")
+            res.success("saved user object")
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.error("error saving user object")
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error("error getting user object")
+    })
 })
 
 //method to save a user's skills
@@ -295,23 +318,33 @@ Parse.Cloud.define("saveUserSkills", function (req, res) {
     //get params
     var params = req.params
     var userId = params.userId
+    var sportId = params.sportId
     var firstSkills = params.firstSkills
     var secondSkills = params.secondSkills
 
-    //get user
-    var userQuery = Parse.Query(Parse.User)
-    userQuery.get(userId).then((userObject) => {
-        //got user object
-        userObject.set("developedSkills", firstSkills)
-        userObject.set("developingSkills", secondSkills)
-        userObject.save(null, objects.useMasterKeyOption).then((savedUser) => {
-            //saved user skills
-            console.log("saved user skills");
-            res.success("saved user skills");
+    //get UserSkill object
+    var userSkillQuery = Parse.Query(objects.UserSkillObject)
+    userSkillQuery.equalTo("userId", userId)
+    userSkillQuery.equalTo("sportId", sportId)
+    userSkillQuery.find().then((userSkillObjects) => {
+        //got user skill objects
+        var userSkillObject = userSkillObjects[0];
+
+        //save skills
+        userSkillObject.set("firstSkills", firstSkills)
+        userSkillObject.set("secondSkills", secondSkills)
+        userSkillObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved userSkillObject
+            console.log("saved user skill object")
+            res.success("saved user skills")
         }, (error) => {
-            //error saving user skills
-            console.log("error saving user skills " + error);
-            res.error("error saving user skills");
+            //error saving userSkillObject
+            console.log("error saving user skill object " + error)
+            res.error("error saving user skill object")
         })
+    }, (error) => {
+        //error getting user skill objects
+        console.log("error getting user skill objects " + error)
+        res.error("error getting user skill objects")
     })
 })
