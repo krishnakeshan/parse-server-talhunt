@@ -316,7 +316,6 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
 //method to add a skill
 Parse.Cloud.define("addUserSkill", function (req, res) {
     //get params
-    console.log("calling addUserSkill")
     var params = req.params
     var userId = params.userId
     var sportId = params.sportId
@@ -342,6 +341,59 @@ Parse.Cloud.define("addUserSkill", function (req, res) {
         //add skillId
         if (!skillsArray.includes(skillId)) {
             skillsArray.push(skillId)
+
+            //save userSkills object
+            if (skillNo == "first") {
+                userSkillsObject.set("firstSkills", skillsArray)
+            } else {
+                userSkillsObject.set("secondSkills", skillsArray)
+            }
+            userSkillsObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                //saved user skills
+                console.log("saved user skills")
+                res.success("saved user skills")
+            }, (error) => {
+                //error saving user skills object
+                console.log("error saving user skills object " + error)
+                res.error("error saving user skills object")
+            })
+        }
+    }, (error) => {
+        //error getting user skills object
+        console.log("error getting user skills object " + error)
+        res.error("error getting user skills object")
+    })
+})
+
+//method to remove a skill
+Parse.Cloud.define("removeUserSkill", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var sportId = params.sportId
+    var skillId = params.skillId
+    var skillNo = params.skillNo
+
+    //get user skills object
+    const userSkillsQuery = new Parse.Query(objects.UserSkillsObject)
+    userSkillsQuery.equalTo("userId", userId)
+    userSkillsQuery.equalTo("sport", sportId)
+    userSkillsQuery.find(objects.useMasterKeyOption).then((userSkillsObjects) => {
+        //got userSkillsObject, add this skill
+        var userSkillsObject = userSkillsObjects[0]
+        var skillsArray = []
+
+        //get appropriate skills array
+        if (skillNo == "first") {
+            skillsArray = userSkillsObject.get("firstSkills")
+        } else {
+            skillsArray = userSkillsObject.get("secondSkills")
+        }
+
+        //remove skillId
+        if (skillsArray.includes(skillId)) {
+            const index = skillsArray.indexOf(skillId)
+            skillsArray.splice(index, 1)
 
             //save userSkills object
             if (skillNo == "first") {
