@@ -327,8 +327,9 @@ Parse.Cloud.define("addUserSkill", function (req, res) {
     const userSkillsQuery = new Parse.Query(objects.UserSkillsObject)
     userSkillsQuery.equalTo("userId", userId)
     userSkillsQuery.equalTo("sport", sportId)
-    userSkillsQuery.find(objects.useMasterKeyOption).then((userSkillsObject) => {
+    userSkillsQuery.find(objects.useMasterKeyOption).then((userSkillsObjects) => {
         //got userSkillsObject, add this skill
+        var userSkillsObject = userSkillsObjects[0]
         var skillsArray = []
 
         //get appropriate skills array
