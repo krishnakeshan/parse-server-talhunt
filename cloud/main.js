@@ -313,6 +313,57 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
     })
 })
 
+//method to add a skill
+Parse.Cloud.define("addUserSkill", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var sportId = params.sportId
+    var skillId = params.skillId
+    var skillNo = params.skillNo
+
+    //get user skills object
+    const userSkillsQuery = new Parse.Query(objects.UserSkillsObject)
+    userSkillsQuery.equalTo("userId", userId)
+    userSkillsQuery.equalTo("sport", sportId)
+    userSkillsQuery.find(objects.useMasterKeyOption).then((userSkillsObject) => {
+        //got userSkillsObject, add this skill
+        var skillsArray = []
+
+        //get appropriate skills array
+        if (skillNo == 0) {
+            skillsArray = userSkillsObject.get("firstSkills")
+        } else {
+            skillsArray = userSkillsObject.get("secondSkills")
+        }
+
+        //add skillId
+        if (!skillsArray.includes(skillId)) {
+            skillsArray.push(skillId)
+
+            //save userSkills object
+            if (skillNo == 0) {
+                userSkillsObject.set("firstSkills", skillsArray)
+            } else {
+                userSkillsObject.set("secondSkills", skillsArray)
+            }
+            userSkillsObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                //saved user skills
+                console.log("saved user skills")
+                res.success("saved user skills")
+            }, (error) => {
+                //error saving user skills object
+                console.log("error saving user skills object " + error)
+                res.error("error saving user skills object")
+            })
+        }
+    }, (error) => {
+        //error getting user skills object
+        console.log("error getting user skills object " + error)
+        res.error("error getting user skills object")
+    })
+})
+
 //method to save a user's skills
 Parse.Cloud.define("saveUserSkills", function (req, res) {
     //get params
