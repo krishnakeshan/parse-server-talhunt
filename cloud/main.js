@@ -316,6 +316,7 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
 //method to add a skill
 Parse.Cloud.define("addUserSkill", function (req, res) {
     //get params
+    console.log("calling addUserSkill")
     var params = req.params
     var userId = params.userId
     var sportId = params.sportId
