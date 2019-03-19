@@ -234,7 +234,7 @@ Parse.Cloud.define("saveUserFavourites", function (req, res) {
 })
 
 //method to save a user's sports
-Parse.Cloud.define("saveUserSports", function (req, res) {
+Parse.Cloud.define("saveUserSports", async (req) => {
     //get params
     var params = req.params
     var sports = params.sports
@@ -253,7 +253,7 @@ Parse.Cloud.define("saveUserSports", function (req, res) {
 })
 
 //method to save a user's subSports
-Parse.Cloud.define("saveUserSubSports", function (req, res) {
+Parse.Cloud.define("saveUserSubSports", async (req) => {
     //get params
     var params = req.params
     var subSports = params.subSports
@@ -272,7 +272,7 @@ Parse.Cloud.define("saveUserSubSports", function (req, res) {
 })
 
 //methods to save a user's selected positions
-Parse.Cloud.define("saveUserPositions", function (req, res) {
+Parse.Cloud.define("saveUserPositions", async (req) => {
     //get params
     var params = req.params
     var positions = params.positions
