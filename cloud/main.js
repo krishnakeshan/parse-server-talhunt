@@ -322,6 +322,9 @@ Parse.Cloud.define("saveUserSkills", function (req, res) {
     var firstSkills = params.firstSkills
     var secondSkills = params.secondSkills
 
+    console.log("got first skills " + firstSkills)
+    console.log("got second skills " + secondSkills)
+
     //get UserSkill object
     var userSkillsQuery = new Parse.Query(objects.UserSkillsObject)
     userSkillsQuery.equalTo("userId", userId)
