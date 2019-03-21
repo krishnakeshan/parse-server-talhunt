@@ -490,3 +490,31 @@ Parse.Cloud.define("saveUserFavourites", function (req, res) {
         res.error("error getting favourites object")
     })
 })
+
+//method to save a user's coachChallenge
+Parse.Cloud.define("saveCoachChallenge", function (req, res) {
+    //get params
+    var params = req.params
+    var challengeId = params.challengeId
+    var challenge = params.challenge
+
+    //get challenge object
+    const challengeQuery = new Parse.Query(objects.CoachChallengeObject)
+    challengeQuery.get(challengeId, objects.useMasterKeyOption).then((challengeObject) => {
+        //got challenge object, update challenge
+        challengeObject.set("challenge", challenge)
+        challengeObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved challenge object
+            console.log("saved challenge object")
+            res.success("saved challenge object")
+        }, (error) => {
+            //error saving challenge object
+            console.log("error saving challenge object " + error)
+            res.error("error saving challenge object")
+        })
+    }, (error) => {
+        //error getting challenge object
+        console.log("error getting challenge object " + error)
+        res.error("error getting challenge object")
+    })
+})

@@ -12,6 +12,7 @@ exports.NotificationObject = Parse.Object.extend("Notification")
 exports.PostCommentObject = Parse.Object.extend("PostComment")
 exports.UserSkillsObject = Parse.Object.extend("UserSkills")
 exports.UserFavouritesObject = Parse.Object.extend("UserFavourites")
+exports.CoachChallengeObject = Parse.Object.extend("CoachChallenge")
 
 //constants
 exports.notificationTypeRecommendation = "recommendationNotification"
