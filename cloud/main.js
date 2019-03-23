@@ -260,14 +260,17 @@ Parse.Cloud.define("saveUserSports", function (req, res) {
 Parse.Cloud.define("saveUserSubSports", function (req, res) {
     //get params
     var params = req.params
-    var subSports = params.subSports
+    var subSportsString = params.subSportsString
     var userId = params.userId
+
+    //create subSports object
+    const subSportsObject = JSON.parse(subSportsString)
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
     userQuery.get(userId).then((userObject) => {
         //got user object, override sports field and save
-        userObject.set("subSports", subSports)
+        userObject.set("subSports", subSportsObject)
         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
             //saved user object
             console.log("saved user object")
