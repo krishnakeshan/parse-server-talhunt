@@ -319,6 +319,55 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
     })
 })
 
+//method to update user's cricket positions
+Parse.Cloud.define("updateCricketPositions", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var positionsString = params.positionsString
+
+    //create positions list
+    var positionsArray = JSON.parse(positionsString)
+
+    //get user object
+    const userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //got user object, now get cricket sport object
+        const cricketQuery = new Parse.Query(objects.SportObject)
+        cricketQuery.equalTo("name", "Cricket")
+        cricketQuery.find(objects.useMasterKeyOption).then((sportObjects) => {
+            //got sport objects
+            const cricketSportObject = sportObjects[0]
+
+            //get positions object for this user
+            var positionsObject = userObject.get("positions")
+
+            //set array
+            positionsObject[cricketSportObject.id] = positionsArray
+
+            //save user object
+            userObject.set("positions", positionsObject)
+            userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                //saved user object, return
+                console.log("saved user object")
+                res.success(true)
+            }, (error) => {
+                //error saving user object
+                console.log("error saving user object " + error)
+                res.error(false)
+            })
+        }, (error) => {
+            //error getting cricket sport object
+            console.log("error getting cricket sport object " + error)
+            res.error(false)
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.error(false)
+    })
+})
+
 //method to add a skill
 Parse.Cloud.define("addUserSkill", function (req, res) {
     //get params
