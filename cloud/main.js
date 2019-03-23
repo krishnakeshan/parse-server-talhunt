@@ -274,11 +274,11 @@ Parse.Cloud.define("saveUserSubSports", function (req, res) {
         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
             //saved user object
             console.log("saved user object")
-            res.success("saved user object")
+            res.success(true)
         }, (error) => {
             //error saving user object
             console.log("error saving user object " + error)
-            res.error("error saving user object")
+            res.error(false)
         })
     }, (error) => {
         //error getting user object
