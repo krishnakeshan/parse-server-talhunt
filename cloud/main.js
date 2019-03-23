@@ -283,7 +283,7 @@ Parse.Cloud.define("saveUserSubSports", function (req, res) {
     }, (error) => {
         //error getting user object
         console.log("error getting user object " + error)
-        res.error("error getting user object")
+        res.error(false)
     })
 })
 
@@ -291,28 +291,31 @@ Parse.Cloud.define("saveUserSubSports", function (req, res) {
 Parse.Cloud.define("saveUserPositions", function (req, res) {
     //get params
     var params = req.params
-    var positions = params.positions
+    var positionsString = params.positions
     var userId = params.userId
+
+    //create positionsObject
+    const positionsObject = JSON.parse(positionsString)
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
-    userQuery.get(userId).then((userObject) => {
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
         //got user object
         console.log("got user object")
-        userObject.set("positions", positions)
+        userObject.set("positions", positionsObject)
         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
             //saved user object
             console.log("saved user object")
-            res.success("saved user object")
+            res.success(true)
         }, (error) => {
             //error saving user object
             console.log("error saving user object " + error)
-            res.error("error saving user object")
+            res.error(false)
         })
     }, (error) => {
         //error getting user object
         console.log("error getting user object " + error)
-        res.error("error getting user object")
+        res.error(false)
     })
 })
 
