@@ -242,7 +242,7 @@ Parse.Cloud.define("saveUserSports", function (req, res) {
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
-    userQuery.get(userId).then((userObject) => {
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
         //got user object
         userObject.set("sports", sports);
         userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
