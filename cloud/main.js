@@ -322,22 +322,30 @@ Parse.Cloud.define("saveUserPositions", function (req, res) {
 //method to update user's sport positions
 Parse.Cloud.define("updateSportPositions", function (req, res) {
     //get params
+    console.log("updating user sports")
     var params = req.params
     var userId = params.userId
+    console.log("got user id " + userId)
     var sportId = params.sportId
+    console.log("got sportId " + sportId)
     var positionsString = params.positionsString
+    console.log("got positions " + positionsString)
 
     //create positions list
     var positionsArray = JSON.parse(positionsString)
+    console.log("constructed a positions array " + positionsArray)
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
     userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
         //got user object, now get sport object
+        console.log("got user " + userObject.get("name"))
         const cricketQuery = new Parse.Query(objects.SportObject)
         cricketQuery.get(sportId, objects.useMasterKeyOption).then((sportObjects) => {
             //got sport objects
+            console.log("got sport objects " + sportObjects.length)
             const sportObject = sportObjects[0]
+            console.log("got sport object " + sportObject.get("name"))
 
             //get positions object for this user
             var positionsObject = userObject.get("positions")
