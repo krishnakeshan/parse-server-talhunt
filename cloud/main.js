@@ -341,10 +341,10 @@ Parse.Cloud.define("updateSportPositions", function (req, res) {
         //got user object, now get sport object
         console.log("got user " + userObject.get("name"))
         const cricketQuery = new Parse.Query(objects.SportObject)
-        cricketQuery.get(sportId, objects.useMasterKeyOption).then((sportObjects) => {
+        cricketQuery.get(sportId, objects.useMasterKeyOption).then((sportObject) => {
             //got sport objects
-            console.log("got sport objects " + sportObjects.length)
-            const sportObject = sportObjects[0]
+            // console.log("got sport objects " + sportObjects.length)
+            // const sportObject = sportObjects[0]
             console.log("got sport object " + sportObject.get("name"))
 
             //get positions object for this user
