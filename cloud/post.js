@@ -205,18 +205,6 @@ Parse.Cloud.define("incrementRecommendation", function (req, res) {
         console.log("error getting recommendation object " + error)
         res.error("error getting recommendation object")
     })
-
-    //get list of supporters
-    var supporters = recommendationObject.get("support")
-    if (!supporters.includes(userId)) {
-        supporters.push(userId)
-    }
-
-    //save changes
-    recommendationObject.set("support", supporters)
-    await recommendationObject.save()
-
-    return true
 })
 
 //method to publish a post comment
