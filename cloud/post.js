@@ -189,6 +189,17 @@ Parse.Cloud.define("incrementRecommendation", function (req, res) {
         if (!supporters.includes(userId)) {
             supporters.push(userId)
         }
+
+        //save recommendation object
+        recommendationObject.set("support", supporters)
+        recommendationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            console.log("incremented recommendation")
+            res.success(true)
+        }, (error) => {
+            //error saving recommendation object
+            console.log("error saving recommendation object " + error)
+            res.success("error saving recommendation object")
+        })
     }, (error) => {
         //error getting recommendation object
         console.log("error getting recommendation object " + error)
