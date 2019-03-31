@@ -37,6 +37,7 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
                 newUser.set("name", name)
                 newUser.set("nameLowerCase", nameLowerCase)
                 newUser.set("profileType", params.profileType)
+                newUser.set("coachType", "")
                 newUser.set("gender", params.gender)
                 newUser.set("age", params.age)
                 newUser.set("city", params.city)
