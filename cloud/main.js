@@ -25,6 +25,34 @@ Parse.Cloud.define('hello', function (req, res) {
     res.success("hello defined");
 });
 
+//cloud function to save a user's "About" string
+Parse.Cloud.define("saveUserAbout", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var about = params.about
+
+    //get user
+    const userQuery = new Parse.Query(Parse.User)
+    userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+        //got user object, set about string and save
+        userObject.set("about", about)
+        userObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved user object, return
+            console.log("saved user about")
+            res.success(true)
+        }, (error) => {
+            //error saving user object
+            console.log("error saving user object " + error)
+            res.success(false)
+        })
+    }, (error) => {
+        //error getting user object
+        console.log("error getting user object " + error)
+        res.success(false)
+    })
+})
+
 //cloud function to let one user support another
 Parse.Cloud.define("supportUser", function (req, res) {
     //get params
