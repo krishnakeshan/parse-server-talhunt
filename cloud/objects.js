@@ -12,6 +12,7 @@ exports.SportPositionObject = Parse.Object.extend("SportPosition");
 exports.RecommendationObject = Parse.Object.extend("Recommendation")
 exports.NotificationObject = Parse.Object.extend("Notification")
 exports.PostCommentObject = Parse.Object.extend("PostComment")
+exports.BestGameObject = Parse.Object.extend("BestGame")
 exports.UserSkillsObject = Parse.Object.extend("UserSkills")
 exports.UserFavouritesObject = Parse.Object.extend("UserFavourites")
 exports.CoachChallengeObject = Parse.Object.extend("CoachChallenge")

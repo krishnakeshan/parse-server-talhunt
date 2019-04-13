@@ -648,3 +648,31 @@ Parse.Cloud.define("saveCoachChallenge", function (req, res) {
         res.error("error getting challenge object")
     })
 })
+
+//method to save a user's best game
+Parse.Cloud.define("saveBestGame", function (req, res) {
+    //get params
+    var params = req.params
+    var userId = params.userId
+    var sport = params.sport
+    var position = params.position
+    var about = params.about
+
+    //create best game object
+    var bestGame = new objects.BestGameObject()
+    bestGame.set("user", userId)
+    bestGame.set("sport", sport)
+    bestGame.set("position", position)
+    bestGame.set("about", about)
+
+    //save object
+    bestGame.save(null, objects.useMasterKeyOption).then((savedObject) => {
+        //saved best game object
+        console.log("saved best game object " + savedObject.id)
+        res.success(true)
+    }, (error) => {
+        //error saving best game object
+        console.log("error saving best game " + error)
+        res.success(false)
+    })
+})
