@@ -29,6 +29,7 @@ Parse.Cloud.define("createPost", function (req, res) {
         newRecommendation.set("to", recommendTo)
         newRecommendation.set("post", savedPostObject.id)
         newRecommendation.set("count", 1)
+        newRecommendation.set("support", [])
         newRecommendation.save(null, objects.useMasterKeyOption).then((savedRecommendation) => {
             //created recommendation object, return successfully
             res.success("Post Published")
@@ -125,6 +126,8 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     newRecommendation.set("from", from)
     newRecommendation.set("to", to)
     newRecommendation.set("post", post)
+    newRecommendation.set("count", 0)
+    newRecommendation.set("support", [])
     newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved recommendation object, now create notification object
         res.success("recommendation successful")
