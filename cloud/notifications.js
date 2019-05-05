@@ -28,3 +28,33 @@ const objects = require("./objects")
 //         res.error("error getting post object " + error)
 //     })
 // })
+
+//method to create a notification
+Parse.Cloud.define("createNotification", function (req, res) {
+    //get params
+    var params = req.params
+    var forId = params.for
+    var from = params.from
+    var content = params.content
+    var type = params.type
+    var notificationString = params.notificationString
+
+    //create notification object
+    var notificationObject = new objects.NotificationObject()
+    notificationObject.set("from", from)
+    notificationObject.set("for", forId)
+    notificationObject.set("content", content)
+    notificationObject.set("type", type)
+    notificationObject.set("seen", false)
+    notificationObject.set("notificationString", notificationString)
+
+    //save notification
+    notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+        //saved notification object
+        res.success("saved notification")
+    }, (error) => {
+        //error saving notification object
+        console.log("error saving notification object " + error)
+        res.error("error saving notification object")
+    })
+})

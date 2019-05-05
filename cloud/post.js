@@ -138,6 +138,43 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     })
 })
 
+//method to increment top recommendation for this post
+Parse.Cloud.define("incrementRecommendation", function (req, res) {
+    //get params
+    var params = req.params
+    var recommendationId = params.recommendationId
+    var userId = params.userId
+
+    //get recommendation object
+    const recommendationQuery = new Parse.Query(objects.RecommendationObject)
+    recommendationQuery.get(recommendationId, objects.useMasterKeyOption).then((recommendationObject) => {
+        //got recommendation object
+        //get list of supporters
+        var supporters = recommendationObject.get("support")
+        var count = recommendationObject.get("count")
+        if (!supporters.includes(userId)) {
+            supporters.push(userId)
+            count += 1
+        }
+
+        //save recommendation object
+        recommendationObject.set("support", supporters)
+        recommendationObject.set("count", count)
+        recommendationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            console.log("incremented recommendation")
+            res.success(true)
+        }, (error) => {
+            //error saving recommendation object
+            console.log("error saving recommendation object " + error)
+            res.success("error saving recommendation object")
+        })
+    }, (error) => {
+        //error getting recommendation object
+        console.log("error getting recommendation object " + error)
+        res.error("error getting recommendation object")
+    })
+})
+
 //method to share post
 Parse.Cloud.define("sharePost", function (req, res) {
     //get params
@@ -173,40 +210,6 @@ Parse.Cloud.define("sharePost", function (req, res) {
         //error getting post object, log error
         console.log("error getting post object " + error)
         res.error("error getting post object")
-    })
-})
-
-//method to increment top recommendation for this post
-Parse.Cloud.define("incrementRecommendation", function (req, res) {
-    //get params
-    var params = req.params
-    var recommendationId = params.recommendationId
-    var userId = params.userId
-
-    //get recommendation object
-    const recommendationQuery = new Parse.Query(objects.RecommendationObject)
-    recommendationQuery.get(recommendationId, objects.useMasterKeyOption).then((recommendationObject) => {
-        //got recommendation object
-        //get list of supporters
-        var supporters = recommendationObject.get("support")
-        if (!supporters.includes(userId)) {
-            supporters.push(userId)
-        }
-
-        //save recommendation object
-        recommendationObject.set("support", supporters)
-        recommendationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
-            console.log("incremented recommendation")
-            res.success(true)
-        }, (error) => {
-            //error saving recommendation object
-            console.log("error saving recommendation object " + error)
-            res.success("error saving recommendation object")
-        })
-    }, (error) => {
-        //error getting recommendation object
-        console.log("error getting recommendation object " + error)
-        res.error("error getting recommendation object")
     })
 })
 
