@@ -268,6 +268,12 @@ Parse.Cloud.define("saveUserSports", function (req, res) {
     var sports = params.sports
     var userId = params.userId
 
+	//if "sports" isn't an array, convert it to one. this can happen if user selects one sport
+	if (!Array.isArray(sports))
+	{
+		sports = [sports]
+	}
+
     //get user object
     const userQuery = new Parse.Query(Parse.User)
     userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
