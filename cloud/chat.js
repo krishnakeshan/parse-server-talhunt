@@ -49,3 +49,37 @@ Parse.Cloud.define("sendChatMessage", function (req, res) {
         res.error("error saving chat message")
     })
 })
+
+//method to mark a chat's messages as seen
+Parse.Cloud.define("markMessagesSeen", function (req, res) {
+    //get parameters
+    const params = req.params
+    const chatObjectId = params.chat
+    const user = params.user
+
+    //get all "unseen" messages for this chat and this user
+    const chatMessagesQuery = new Parse.Query(objects.ChatMessageObject)
+    chatMessagesQuery.equalTo("chat", chatObjectId)
+    chatMessagesQuery.equalTo("for", user)
+    chatMessagesQuery.equalTo("seen", false)
+    chatMessagesQuery.find(objects.useMasterKeyOption).then((messages) => {
+        //got chat messages, now mark them as seen
+        for (var message in messages) {
+            message.set("seen", true)
+        }
+
+        //save all objects at once
+        Parse.Object.saveAll(messages, objects.useMasterKeyOption).then((result) => {
+            //saved chat message objects, return success
+            res.success("saved chat messages")
+        }, (error) => {
+            //error saving chat message objects
+            console.error("error saving chat messages " + error)
+            res.error("error saving chat messages")
+        })
+    }, (error) => {
+        //error getting chat messages
+        console.error("error getting chat messages " + error)
+        res.error("error getting chat messages")
+    })
+})
