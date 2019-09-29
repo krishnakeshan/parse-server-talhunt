@@ -65,6 +65,7 @@ Parse.Cloud.define("markMessagesSeen", function (req, res) {
     chatMessagesQuery.find(objects.useMasterKeyOption).then((messages) => {
         //got chat messages, now mark them as seen
         for (var i = 0; i < messages.length; i++) {
+            console.log("marking message seen " + messages[i] + ": " + typeof messages[i])
             messages[i].set("seen", true)
         }
 
