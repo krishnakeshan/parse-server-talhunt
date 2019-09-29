@@ -40,6 +40,7 @@ Parse.Cloud.define("sendChatMessage", function (req, res) {
     newChatMessage.set("for", forId)
     newChatMessage.set("chat", chat)
     newChatMessage.set("message", message)
+    newChatMessage.set("seen", false)
     newChatMessage.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved chat message object
         res.success("message sent")
