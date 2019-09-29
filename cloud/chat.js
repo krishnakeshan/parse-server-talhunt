@@ -64,8 +64,8 @@ Parse.Cloud.define("markMessagesSeen", function (req, res) {
     chatMessagesQuery.equalTo("seen", false)
     chatMessagesQuery.find(objects.useMasterKeyOption).then((messages) => {
         //got chat messages, now mark them as seen
-        for (var message in messages) {
-            message.set("seen", true)
+        for (var i = 0; i < messages.length; i++) {
+            messages[i].set("seen", true)
         }
 
         //save all objects at once
