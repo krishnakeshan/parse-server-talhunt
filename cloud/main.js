@@ -683,7 +683,7 @@ Parse.Cloud.define("saveBestGame", function (req, res) {
 })
 
 //method to create UserFavourites object for a user and sport
-Parse.Cloud.define("createUserFavouriteForSport", function (req, res) {
+Parse.Cloud.define("createUserFavouritesForSport", function (req, res) {
     //get params
     const params = req.params
     const userId = params.userId
