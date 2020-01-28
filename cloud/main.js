@@ -268,11 +268,10 @@ Parse.Cloud.define("saveUserSports", function (req, res) {
     var sports = params.sports
     var userId = params.userId
 
-	//if "sports" isn't an array, convert it to one. this can happen if user selects one sport
-	if (!Array.isArray(sports))
-	{
-		sports = [sports]
-	}
+    //if "sports" isn't an array, convert it to one. this can happen if user selects one sport
+    if (!Array.isArray(sports)) {
+        sports = [sports]
+    }
 
     //get user object
     const userQuery = new Parse.Query(Parse.User)
@@ -680,5 +679,27 @@ Parse.Cloud.define("saveBestGame", function (req, res) {
         //error saving best game object
         console.log("error saving best game " + error)
         res.success(false)
+    })
+})
+
+//method to create UserFavourites object for a user and sport
+Parse.Cloud.define("createUserFavouriteForSport", function (req, res) {
+    //get params
+    const params = req.params
+    const userId = params.userId
+    const sportId = params.sportId
+
+    //create object
+    var userFavouritesObject = new Parse.Object("UserFavourites")
+    userFavouritesObject.set("userId", userId)
+    userFavouritesObject.set("sportId", sportId)
+    userFavouritesObject.set("teams", [])
+    userFavouritesObject.set("players", [])
+    userFavouritesObject.save(null).then((value) => {
+        //saved user favourites object
+        res.success("true")
+    }).catch((error) => {
+        //error saving user favourites object
+        res.error("error")
     })
 })
