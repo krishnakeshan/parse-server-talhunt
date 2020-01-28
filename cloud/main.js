@@ -700,6 +700,6 @@ Parse.Cloud.define("createUserFavouritesForSport", function (req, res) {
         res.success("true")
     }).catch((error) => {
         //error saving user favourites object
-        res.error("error")
+        res.error("error " + error)
     })
 })
