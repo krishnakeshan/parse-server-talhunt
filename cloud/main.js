@@ -695,9 +695,9 @@ Parse.Cloud.define("createUserFavouritesForSport", function (req, res) {
     userFavouritesObject.set("sportId", sportId)
     userFavouritesObject.set("teams", [])
     userFavouritesObject.set("players", [])
-    userFavouritesObject.save(null).then((value) => {
+    userFavouritesObject.save(null, objects.useMasterKeyOption).then((value) => {
         //saved user favourites object
-        res.success("true")
+        res.success(true)
     }).catch((error) => {
         //error saving user favourites object
         res.error("error " + error)
