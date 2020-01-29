@@ -682,6 +682,28 @@ Parse.Cloud.define("saveBestGame", function (req, res) {
     })
 })
 
+//method to create CoachChallenge for sport
+Parse.Cloud.define("createCoachChallengeForSport", function (req, res) {
+    //get params
+    const params = req.params
+    const userId = params.userId
+    const sportId = params.sportId
+
+    //create object
+    var coachChallenge = new Parse.Object("CoachChallenge")
+    coachChallenge.set("userId", userId)
+    coachChallenge.set("sportId", sportId)
+    coachChallenge.set("challenge", "")
+    coachChallenge.save(null, objects.useMasterKeyOption).then((savedObject) => {
+        //return true result
+        res.success(true)
+    }, (error) => {
+        //return false result
+        console.error("error saving CoachChallenge " + error)
+        res.error(false)
+    })
+})
+
 //method to create UserFavourites object for a user and sport
 Parse.Cloud.define("createUserFavouritesForSport", function (req, res) {
     //get params
