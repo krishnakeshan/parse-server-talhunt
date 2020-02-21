@@ -5,8 +5,68 @@ const main = require("./main")
 //function to create user account with phone number
 Parse.Cloud.define("createUserAccount", function (req, res) {
     var params = req.params
-    var accessToken = params.accessToken
+    var phoneNumber = params.phoneNumber
     var password = params.password
+
+    //first check if user with this number already exists
+    var userQuery = new Parse.Query(Parse.User)
+    userQuery.equalTo("phoneNumber", phoneNumber)
+    userQuery.find(objects.useMasterKeyOption).then((users) => {
+        //query executed
+        if (users.length == 0) {
+            //setup name and nameLowerCase variables
+            var name = params.firstName + " " + params.lastName
+            var nameLowerCase = name.toLowerCase()
+
+            //user doesn't exist, create new
+            var newUser = new Parse.User()
+            newUser.set("username", phoneNumber)
+            newUser.set("password", password)
+            newUser.set("phone", phoneNumber)
+            newUser.set("firstName", params.firstName)
+            newUser.set("lastName", params.lastName)
+            newUser.set("name", name)
+            newUser.set("nameLowerCase", nameLowerCase)
+            newUser.set("profileType", params.profileType)
+            newUser.set("coachType", "")
+            newUser.set("gender", params.gender)
+            newUser.set("age", params.age)
+            newUser.set("city", params.city)
+            newUser.set("sports", [])
+            newUser.set("subSports", {})
+            newUser.set("positions", {})
+            newUser.set("country", params.country)
+            newUser.set("support", 0)
+            newUser.set("supporting", 0)
+
+            //sign up user
+            newUser.signUp(null, objects.useMasterKeyOption).then((newUser) => {
+                res.success({
+                    'result': true,
+                    'parseSessionToken': newUser.getSessionToken()
+                })
+            }, (error) => {
+                //error occured signing up
+                console.log("error creating user " + error)
+                res.success({
+                    'result': false,
+                    'reason': 'error creating user ' + error
+                })
+            })
+        } else {
+            console.log("user already exists")
+            res.success({
+                'result': false,
+                'reason': 'account with this number already exists'
+            })
+        }
+    }).catch((error) => {
+        console.error("error finding user objects")
+        res.error({
+            'result': false,
+            'reason': 'error finding user objects ' + error
+        })
+    })
 
     //validate access token first
     var requestOptions = {
@@ -16,69 +76,6 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
         },
         json: true
     }
-    request(requestOptions).then(function (userInfo) {
-        //check if user with this information already exists
-        var userQuery = new Parse.Query(Parse.User)
-        userQuery.equalTo("facebookId", userInfo.id)
-        userQuery.find(objects.useMasterKeyOption).then((users) => {
-            if (users.length == 0) {
-                //setup name and nameLowerCase variables
-                var name = params.firstName + " " + params.lastName
-                var nameLowerCase = name.toLowerCase()
-
-                //user doesn't exist, create new
-                var newUser = new Parse.User()
-                newUser.set("username", userInfo.phone.national_number)
-                newUser.set("password", password)
-                newUser.set("facebookId", userInfo.id)
-                newUser.set("phone", userInfo.phone.number)
-                newUser.set("firstName", params.firstName)
-                newUser.set("lastName", params.lastName)
-                newUser.set("name", name)
-                newUser.set("nameLowerCase", nameLowerCase)
-                newUser.set("profileType", params.profileType)
-                newUser.set("coachType", "")
-                newUser.set("gender", params.gender)
-                newUser.set("age", params.age)
-                newUser.set("city", params.city)
-                newUser.set("sports", [])
-                newUser.set("subSports", {})
-                newUser.set("positions", {})
-                newUser.set("country", params.country)
-                newUser.set("support", 0)
-                newUser.set("supporting", 0)
-                newUser.signUp(null, objects.useMasterKeyOption).then((newUser) => {
-                    //created parse user, now create firebase user
-                    main.firebaseAdmin.auth().createCustomToken(userInfo.id)
-                        .then(function (customToken) {
-                            //generated custom token, return both tokens to user
-                            let tokens = newUser.getSessionToken() + "," + customToken
-                            res.success(tokens)
-                        }).catch(function (error) {
-                            //error generating token
-                            console.log("error creating custom token " + error)
-                            res.error("error creating custom token " + error)
-                        })
-                }, (error) => {
-                    //error occured signing up
-                    console.log("error creating user " + error)
-                    res.error("error creating user " + error)
-                })
-            }
-
-            //user already exists, return
-            else {
-                console.log("user already exists")
-                res.error("An account already exists with this phone number")
-            }
-        }, (error) => {
-            console.log("error finding users " + error)
-            res.error("error getting users " + error)
-        })
-    }).catch(function (error) {
-        console.log("error validating token " + error)
-        res.error("error getting user information " + error)
-    })
 })
 
 //method to login user
