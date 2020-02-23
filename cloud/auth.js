@@ -67,15 +67,6 @@ Parse.Cloud.define("createUserAccount", function (req, res) {
             'reason': 'error finding user objects ' + error
         })
     })
-
-    //validate access token first
-    var requestOptions = {
-        uri: objects.facebookAPIBaseURL,
-        qs: {
-            access_token: accessToken
-        },
-        json: true
-    }
 })
 
 //method to login user
