@@ -451,6 +451,7 @@ Parse.Cloud.define("updateCricketPositions", function (req, res) {
 //method to add a skill
 Parse.Cloud.define("addUserSkill", function (req, res) {
     //get params
+    console.log("adding user skill")
     var params = req.params
     var userId = params.userId
     var sportId = params.sportId
@@ -462,36 +463,86 @@ Parse.Cloud.define("addUserSkill", function (req, res) {
     userSkillsQuery.equalTo("userId", userId)
     userSkillsQuery.equalTo("sport", sportId)
     userSkillsQuery.find(objects.useMasterKeyOption).then((userSkillsObjects) => {
-        //got userSkillsObject, add this skill
-        var userSkillsObject = userSkillsObjects[0]
-        var skillsArray = []
+        //query finished, check if UserSkills object exists
+        if (userSkillsObjects.length == 0) {
+            //UserSkills object doesn't exist, create one
+            var userSkills = new Parse.Object("UserSkills")
+            userSkills.set("userId", userId)
+            userSkills.set("sport", sportId)
+            userSkills.set("firstSkills", [])
+            userSkills.set("secondSkills", [])
+            userSkills.save(null, objects.useMasterKeyOption).then((userSkillsObject) => {
+                var skillsArray = []
 
-        //get appropriate skills array
-        if (skillNo == "first") {
-            skillsArray = userSkillsObject.get("firstSkills")
-        } else {
-            skillsArray = userSkillsObject.get("secondSkills")
+                //get appropriate skills array
+                if (skillNo == "first") {
+                    skillsArray = userSkillsObject.get("firstSkills")
+                } else {
+                    skillsArray = userSkillsObject.get("secondSkills")
+                }
+
+                //add skillId
+                if (!skillsArray.includes(skillId)) {
+                    skillsArray.push(skillId)
+
+                    //save userSkills object
+                    if (skillNo == "first") {
+                        userSkillsObject.set("firstSkills", skillsArray)
+                    } else {
+                        userSkillsObject.set("secondSkills", skillsArray)
+                    }
+                    userSkillsObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                        //saved user skills
+                        console.log("saved user skills")
+                        res.success("saved user skills")
+                    }, (error) => {
+                        //error saving user skills object
+                        console.log("error saving user skills object " + error)
+                        res.error("error saving user skills object")
+                    })
+                }
+            }, (error) => {
+                //error saving UserSkills object
+                console.error("error creating UserSkills object " + error)
+                res.error({
+                    'result': false,
+                    'reason': "error creating UserSkills object " + error
+                })
+            })
         }
 
-        //add skillId
-        if (!skillsArray.includes(skillId)) {
-            skillsArray.push(skillId)
+        //UserSkills object exists, save normally
+        else {
+            var userSkillsObject = userSkillsObjects[0]
+            var skillsArray = []
 
-            //save userSkills object
+            //get appropriate skills array
             if (skillNo == "first") {
-                userSkillsObject.set("firstSkills", skillsArray)
+                skillsArray = userSkillsObject.get("firstSkills")
             } else {
-                userSkillsObject.set("secondSkills", skillsArray)
+                skillsArray = userSkillsObject.get("secondSkills")
             }
-            userSkillsObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
-                //saved user skills
-                console.log("saved user skills")
-                res.success("saved user skills")
-            }, (error) => {
-                //error saving user skills object
-                console.log("error saving user skills object " + error)
-                res.error("error saving user skills object")
-            })
+
+            //add skillId
+            if (!skillsArray.includes(skillId)) {
+                skillsArray.push(skillId)
+
+                //save userSkills object
+                if (skillNo == "first") {
+                    userSkillsObject.set("firstSkills", skillsArray)
+                } else {
+                    userSkillsObject.set("secondSkills", skillsArray)
+                }
+                userSkillsObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                    //saved user skills
+                    console.log("saved user skills")
+                    res.success("saved user skills")
+                }, (error) => {
+                    //error saving user skills object
+                    console.log("error saving user skills object " + error)
+                    res.error("error saving user skills object")
+                })
+            }
         }
     }, (error) => {
         //error getting user skills object
