@@ -23,21 +23,26 @@ Parse.Cloud.define("createPost", function (req, res) {
     newPost.set("starCount", 0)
     newPost.set("isShared", false)
     newPost.save(null, objects.useMasterKeyOption).then((savedPostObject) => {
-        //saved post object, now create recommendation object
-        var newRecommendation = new objects.RecommendationObject()
-        newRecommendation.set("from", from)
-        newRecommendation.set("to", recommendTo)
-        newRecommendation.set("post", savedPostObject.id)
-        newRecommendation.set("count", 1)
-        newRecommendation.set("support", [])
-        newRecommendation.save(null, objects.useMasterKeyOption).then((savedRecommendation) => {
-            //created recommendation object, return successfully
-            res.success("Post Published")
-        }, (error) => {
-            //error creating recommendation object
-            console.log("error creating recommendation object " + error)
-            res.error("error creating recommendation object")
-        })
+        //saved post object, now create recommendation object if recommendation selected
+        if (recommendTo.length != 0) {
+            var newRecommendation = new objects.RecommendationObject()
+            newRecommendation.set("from", from)
+            newRecommendation.set("to", recommendTo)
+            newRecommendation.set("post", savedPostObject.id)
+            newRecommendation.set("count", 1)
+            newRecommendation.set("support", [])
+            newRecommendation.save(null, objects.useMasterKeyOption).then((savedRecommendation) => {
+                //created recommendation object, return successfully
+                res.success("Post Published")
+            }, (error) => {
+                //error creating recommendation object
+                console.log("error creating recommendation object " + error)
+                res.error("error creating recommendation object")
+            })
+        } else {
+            //no recommendation creation needed, return success
+            res.success("Post Published");
+        }
     }, (error) => {
         //error saving post object
         console.log("error saving post object " + error)
