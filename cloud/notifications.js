@@ -33,20 +33,16 @@ const objects = require("./objects")
 Parse.Cloud.define("createNotification", function (req, res) {
     //get params
     var params = req.params
-    var forId = params.for
-    var from = params.from
+    var forId = params.forId
     var content = params.content
     var type = params.type
-    var notificationString = params.notificationString
 
     //create notification object
     var notificationObject = new objects.NotificationObject()
-    notificationObject.set("from", from)
-    notificationObject.set("for", forId)
+    notificationObject.set("forId", forId)
     notificationObject.set("content", content)
     notificationObject.set("type", type)
     notificationObject.set("seen", false)
-    notificationObject.set("notificationString", notificationString)
 
     //save notification
     notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
