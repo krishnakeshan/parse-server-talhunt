@@ -37,20 +37,54 @@ Parse.Cloud.define("createNotification", function (req, res) {
     var content = params.content
     var type = params.type
 
-    //create notification object
-    var notificationObject = new objects.NotificationObject()
-    notificationObject.set("forId", forId)
-    notificationObject.set("content", content)
-    notificationObject.set("type", type)
-    notificationObject.set("seen", false)
+    //if notification is of "recommendation" type, check if coach already seen it
+    if (type == "recommendationNotification") {
+        //get PostSeen object
+        var postSeenQuery = new Parse.Query("PostSeen")
+        postSeenQuery.equalTo("post", content["postId"])
+        postSeenQuery.equalTo("by", content["to"])
+        postSeenQuery.find(objects.useMasterKeyOption).then((postSeenObjects) => {
+            if (postSeenObjects.length == 0) {
+                var notificationObject = new objects.NotificationObject()
+                notificationObject.set("forId", forId)
+                notificationObject.set("content", content)
+                notificationObject.set("type", type)
+                notificationObject.set("seen", false)
 
-    //save notification
-    notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
-        //saved notification object
-        res.success("saved notification")
-    }, (error) => {
-        //error saving notification object
-        console.log("error saving notification object " + error)
-        res.error("error saving notification object")
-    })
+                //save notification
+                notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+                    //saved notification object
+                    res.success("saved notification")
+                }, (error) => {
+                    //error saving notification object
+                    console.log("error saving notification object " + error)
+                    res.error("error saving notification object")
+                })
+            } else {
+                res.success("saved notification")
+            }
+        }, (error) => {
+            console.error("error retrieving PostSeen objects " + error)
+            res.error("error retrieving PostSeen objects " + error)
+        })
+    }
+
+    //else create notification object straight away
+    else {
+        var notificationObject = new objects.NotificationObject()
+        notificationObject.set("forId", forId)
+        notificationObject.set("content", content)
+        notificationObject.set("type", type)
+        notificationObject.set("seen", false)
+
+        //save notification
+        notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved notification object
+            res.success("saved notification")
+        }, (error) => {
+            //error saving notification object
+            console.log("error saving notification object " + error)
+            res.error("error saving notification object")
+        })
+    }
 })
