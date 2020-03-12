@@ -35,7 +35,6 @@ Parse.Cloud.define("createNotification", function (req, res) {
     var params = req.params
     var forId = params.forId
     var notificationString = params.notificationString
-    var content = params.content
     var type = params.type
 
     //if notification is of "recommendation" type, check if coach already seen it
@@ -49,6 +48,11 @@ Parse.Cloud.define("createNotification", function (req, res) {
                 var notificationObject = new objects.NotificationObject()
                 notificationObject.set("forId", forId)
                 notificationObject.set("notificationString", notificationString)
+                var content = {
+                    "postId": params.postId,
+                    "from": params.from,
+                    "to": params.to
+                }
                 notificationObject.set("content", content)
                 notificationObject.set("type", type)
                 notificationObject.set("seen", false)
@@ -76,6 +80,11 @@ Parse.Cloud.define("createNotification", function (req, res) {
         var notificationObject = new objects.NotificationObject()
         notificationObject.set("forId", forId)
         notificationObject.set("notificationString", notificationString)
+        var content = {
+            "postId": params.postId,
+            "from": params.from,
+            "to": params.to
+        }
         notificationObject.set("content", content)
         notificationObject.set("type", type)
         notificationObject.set("seen", false)
