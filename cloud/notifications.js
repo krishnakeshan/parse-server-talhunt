@@ -34,6 +34,7 @@ Parse.Cloud.define("createNotification", function (req, res) {
     //get params
     var params = req.params
     var forId = params.forId
+    var notificationString = params.notificationString
     var content = params.content
     var type = params.type
 
@@ -47,6 +48,7 @@ Parse.Cloud.define("createNotification", function (req, res) {
             if (postSeenObjects.length == 0) {
                 var notificationObject = new objects.NotificationObject()
                 notificationObject.set("forId", forId)
+                notificationObject.set("notificationString", notificationString)
                 notificationObject.set("content", content)
                 notificationObject.set("type", type)
                 notificationObject.set("seen", false)
@@ -73,6 +75,7 @@ Parse.Cloud.define("createNotification", function (req, res) {
     else {
         var notificationObject = new objects.NotificationObject()
         notificationObject.set("forId", forId)
+        notificationObject.set("notificationString", notificationString)
         notificationObject.set("content", content)
         notificationObject.set("type", type)
         notificationObject.set("seen", false)
