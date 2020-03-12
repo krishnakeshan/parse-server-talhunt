@@ -41,8 +41,8 @@ Parse.Cloud.define("createNotification", function (req, res) {
     if (type == "recommendationNotification") {
         //get PostSeen object
         var postSeenQuery = new Parse.Query("PostSeen")
-        postSeenQuery.equalTo("post", content["postId"])
-        postSeenQuery.equalTo("by", content["to"])
+        postSeenQuery.equalTo("post", params.postId)
+        postSeenQuery.equalTo("by", params.to)
         postSeenQuery.find(objects.useMasterKeyOption).then((postSeenObjects) => {
             if (postSeenObjects.length == 0) {
                 var notificationObject = new objects.NotificationObject()
