@@ -75,17 +75,34 @@ Parse.Cloud.define("createNotification", function (req, res) {
         })
     }
 
+    //if notification is of type post seen, set content object on it
+    else if (type == "postSeenNotification") {
+        var notificationObject = new objects.NotificationObject()
+        notificationObject.set("forId", forId)
+        notificationObject.set("notificationString", notificationString)
+        var content = {
+            "postId": params.postId
+        }
+        notificationObject.set("content", content)
+        notificationObject.set("type", type)
+        notificationObject.set("seen", false)
+
+        //save notification
+        notificationObject.save(null, objects.useMasterKeyOption).then((savedObject) => {
+            //saved notification object
+            res.success("saved notification")
+        }, (error) => {
+            //error saving notification object
+            console.log("error saving notification object " + error)
+            res.error("error saving notification object")
+        })
+    }
+
     //else create notification object straight away
     else {
         var notificationObject = new objects.NotificationObject()
         notificationObject.set("forId", forId)
         notificationObject.set("notificationString", notificationString)
-        var content = {
-            "postId": params.postId,
-            "from": params.from,
-            "to": params.to
-        }
-        notificationObject.set("content", content)
         notificationObject.set("type", type)
         notificationObject.set("seen", false)
 
