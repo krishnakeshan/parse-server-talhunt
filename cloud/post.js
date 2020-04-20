@@ -79,7 +79,7 @@ Parse.Cloud.define("starPost", function (req, res) {
                     notification.set("forId", postObject.get("from"))
                     let notificationString = userObject.get("name") + " starred your post"
                     notification.set("notificationString", notificationString)
-                    notification.save()
+                    notification.save(null, objects.useMasterKeyOption)
                     res.success("post saved")
                 }, (error) => {
                     //error getting user
@@ -261,7 +261,7 @@ Parse.Cloud.define("postComment", function (req, res) {
             notification.set("forId", postObject.get("from"))
             let notificationString = userObject.get("name") + " commented on your post"
             notification.set("notificationString", notificationString)
-            notification.save()
+            notification.save(null, objects.useMasterKeyOption)
             res.success("comment saved")
         }, (error) => {
             //error getting user
