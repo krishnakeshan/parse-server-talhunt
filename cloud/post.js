@@ -62,15 +62,30 @@ Parse.Cloud.define("starPost", function (req, res) {
     postQuery.get(postId, objects.useMasterKeyOption).then((postObject) => {
         //got post object, add this user's star if not already added
         if (!postObject.get("stars").includes(userId)) {
-            var stars = postObject.get("stars"),
-                starCount = postObject.get("starCount")
-            stars.push(userId)
+            var stars = postObject.get("stars"), starCount = postObject.get("starCount")
+            stars.push(userId) //add user to list of starrers
             starCount += 1
             postObject.set("stars", stars)
             postObject.set("starCount", starCount)
             postObject.save(null, objects.useMasterKeyOption).then((savedPost) => {
-                //post saved, return
-                res.success("post saved")
+                //post saved, create notification
+                var userQuery = new Parse.Query(Parse.User)
+                userQuery.get(userId, objects.useMasterKeyOption).then((userObject) => {
+                    //create notification
+                    var notification = new Parse.Object("Notification")
+                    notification.set("type", "postStarNotification")
+                    notification.set("content", postId)
+                    notification.set("seen", false)
+                    notification.set("forId", postObject.get("from"))
+                    let notificationString = userObject.get("name") + " starred your post"
+                    notification.set("notificationString", notificationString)
+                    notification.save()
+                    res.success("post saved")
+                }, (error) => {
+                    //error getting user
+                    console.log("error getting user " + userId)
+                    res.error("error getting user " + userId)
+                })
             }, (error) => {
                 //error saving post
                 console.log("error saving post " + error)
@@ -234,8 +249,25 @@ Parse.Cloud.define("postComment", function (req, res) {
     newComment.set("fromName", fromName)
     newComment.set("comment", comment)
     newComment.save(null, objects.useMasterKeyOption).then((savedComment) => {
-        //saved comment
-        res.success("comment saved")
+        //saved comment, create notification
+        //post saved, create notification
+        var userQuery = new Parse.Query(Parse.User)
+        userQuery.get(from, objects.useMasterKeyOption).then((userObject) => {
+            //create notification
+            var notification = new Parse.Object("Notification")
+            notification.set("type", "postCommentNotification")
+            notification.set("content", post)
+            notification.set("seen", false)
+            notification.set("forId", postObject.get("from"))
+            let notificationString = userObject.get("name") + " commented on your post"
+            notification.set("notificationString", notificationString)
+            notification.save()
+            res.success("comment saved")
+        }, (error) => {
+            //error getting user
+            console.log("error getting user " + userId)
+            res.error("error getting user " + userId)
+        })
     }, (error) => {
         //error saving comment
         console.error("error saving comment " + error)
