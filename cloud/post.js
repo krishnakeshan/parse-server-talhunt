@@ -74,7 +74,7 @@ Parse.Cloud.define("starPost", function (req, res) {
                     //create notification
                     var notification = new Parse.Object("Notification")
                     notification.set("type", "postStarNotification")
-                    notification.set("content", postId)
+                    notification.set("content", { "postId": postId })
                     notification.set("seen", false)
                     notification.set("forId", postObject.get("from"))
                     let notificationString = userObject.get("name") + " starred your post"
@@ -256,7 +256,7 @@ Parse.Cloud.define("postComment", function (req, res) {
             //create notification
             var notification = new Parse.Object("Notification")
             notification.set("type", "postCommentNotification")
-            notification.set("content", post)
+            notification.set("content", { "postId": post })
             notification.set("seen", false)
             notification.set("forId", postObject.get("from"))
             let notificationString = userObject.get("name") + " commented on your post"
