@@ -245,7 +245,7 @@ Parse.Cloud.define("incrementRecommendation", function (req, res) {
                     if (!flag) {
                         //notification doesn't exist, get user
                         var userQuery = new Parse.Query(Parse.User)
-                        userQuery.get(recommendationObject.get("from"), objects.useMasterKeyOption).then((fromUser) {
+                        userQuery.get(recommendationObject.get("from"), objects.useMasterKeyOption).then((fromUser) => {
                             var notification = new Parse.Object("Notification")
                             notification.set("type", "recommendationNotification")
                             notification.set("content", {
