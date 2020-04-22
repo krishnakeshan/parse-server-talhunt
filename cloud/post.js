@@ -29,7 +29,7 @@ Parse.Cloud.define("createPost", function (req, res) {
             newRecommendation.set("from", from)
             newRecommendation.set("to", recommendTo)
             newRecommendation.set("post", savedPostObject.id)
-            newRecommendation.set("count", 1)
+            newRecommendation.set("count", 0)
             newRecommendation.set("support", [])
             newRecommendation.save(null, objects.useMasterKeyOption).then((savedRecommendation) => {
                 //created recommendation object, return successfully
@@ -150,6 +150,56 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     newRecommendation.set("support", [])
     newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved recommendation object, now create notification object
+        var fromQuery = new Parse.Query(Parse.User)
+        fromQuery.get(from, objects.useMasterKeyOption).then((fromUser) => {
+            //get "to" user
+            var toQuery = new Parse.Query(Parse.User)
+            toQuery.get(to, objects.useMasterKeyOption).then((toUser) => {
+                //create first notification
+                var notification = new Parse.Object("Notification")
+                notification.set("type", "recommendationNotification")
+                notification.set("content", {
+                    "from": from,
+                    "post": post,
+                    "to": to
+                })
+                notification.set("seen", false)
+                notification.set("forId", to)
+                var notificationString = from.get("name") + " recommended a post to you"
+                notification.set("notificationString", notificationString)
+                notification.save(null, objects.useMasterKeyOption)
+
+                //get post
+                var postQuery = new Parse.Query("Post")
+                postQuery.get(post, objects.useMasterKeyOption).then((postObject) => {
+                    //got all objects, now create notification
+                    var notification = new Parse.Object("Notification")
+                    notification.set("type", "recommendationNotification")
+                    notification.set("content", {
+                        "from": from,
+                        "postId": post,
+                        "to": to
+                    })
+                    notification.set("seen", false)
+                    notification.set("forId", post.get("from"))
+                    var notificationString = fromUser.get("name") + " recommended your post to " + toUser.get("name")
+                    notification.set("notificationString", notificationString)
+                    notification.save(null, objects.useMasterKeyOption)
+                }, (error) => {
+                    //error getting post
+                    console.error("error getting post " + error)
+                    res.error("error getting post " + error)
+                })
+            }, (error) => {
+                //error getting to user
+                console.error("error getting to user " + error)
+                res.error("error getting to user " + error)
+            })
+        }, (error) => {
+            //error getting from user
+            console.error("error getting from user " + error)
+            res.error("error getting from user")
+        })
         res.success("recommendation successful")
     }, (error) => {
         //error saving recommendation object
