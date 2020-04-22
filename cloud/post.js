@@ -227,7 +227,7 @@ Parse.Cloud.define("incrementRecommendation", function (req, res) {
             supporters.push(userId)
             count += 1
 
-            if (count >= 200) {
+            if (count >= 1) {
                 //check if notification already exists
                 var notificationQuery = new Parse.Query("Notification")
                 notificationQuery.equalTo("forId", recommendationObject.get("to"))
