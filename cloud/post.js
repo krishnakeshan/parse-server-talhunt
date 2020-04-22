@@ -167,7 +167,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                 notification.set("forId", to)
                 var notificationString = from.get("name") + " recommended a post to you"
                 notification.set("notificationString", notificationString)
-                notification.save(null, objects.useMasterKeyOption)
+                // notification.save(null, objects.useMasterKeyOption)
 
                 //get post
                 var postQuery = new Parse.Query("Post")
@@ -184,7 +184,9 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                     notification.set("forId", post.get("from"))
                     var notificationString = fromUser.get("name") + " recommended your post to " + toUser.get("name")
                     notification.set("notificationString", notificationString)
-                    notification.save(null, objects.useMasterKeyOption)
+                    // notification.save(null, objects.useMasterKeyOption)
+
+                    res.success("recommendation successful")
                 }, (error) => {
                     //error getting post
                     console.error("error getting post " + error)
@@ -200,7 +202,6 @@ Parse.Cloud.define("recommendPost", function (req, res) {
             console.error("error getting from user " + error)
             res.error("error getting from user")
         })
-        res.success("recommendation successful")
     }, (error) => {
         //error saving recommendation object
         console.log("error saving recommendation object " + error)
@@ -225,6 +226,46 @@ Parse.Cloud.define("incrementRecommendation", function (req, res) {
         if (!supporters.includes(userId)) {
             supporters.push(userId)
             count += 1
+
+            if (count >= 200) {
+                //check if notification already exists
+                var notificationQuery = new Parse.Query("Notification")
+                notificationQuery.equalTo("forId", recommendationObject.get("to"))
+                notificationQuery.equalTo("type", "recommendationNotification")
+                notificationQuery.find(objects.useMasterKeyOption).then((notifications) => {
+                    //check each notification
+                    var flag = false
+                    for (const notification in notifications) {
+                        if (notification.get("content").postId === recommendationObject.get("post")) {
+                            flag = true
+                            break;
+                        }
+                    }
+
+                    if (!flag) {
+                        //notification doesn't exist, get user
+                        var userQuery = new Parse.Query(Parse.User)
+                        userQuery.get(recommendationObject.get("from"), objects.useMasterKeyOption).then((fromUser) {
+                            var notification = new Parse.Object("Notification")
+                            notification.set("type", "recommendationNotification")
+                            notification.set("content", {
+                                "postId": recommendationObject.get("post")
+                            })
+                            notification.set("seen", false)
+                            notification.set("forId", recommendationObject.get("to"))
+                            var notificationString = fromUser.get("name") + " recommended a post to you"
+                            notification.set("notificationString", notificationString)
+                            notification.save(null, objects.useMasterKeyOption)
+                        }, (error) => {
+                            //error getting from user
+                            console.error("error getting from user " + error)
+                        })
+                    }
+                }, (error) => {
+                    //error getting notifications
+                    console.error("error getting notifications")
+                })
+            }
         }
 
         //save recommendation object
