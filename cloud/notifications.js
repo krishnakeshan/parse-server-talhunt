@@ -132,6 +132,7 @@ Parse.Cloud.define("createRecommendationNotification", function (req, res) {
     notification.set("forId", forId)
     notification.set("notificationString", notificationString)
     notification.set("content", { "postId": postId })
+    notification.set("seen", false)
 
     notification.save(null, objects.useMasterKeyOption).then((savedObject) => {
         res.success("saved notification")

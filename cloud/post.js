@@ -136,6 +136,7 @@ Parse.Cloud.define("unStarPost", function (req, res) {
 //method to recommend this post to someone
 Parse.Cloud.define("recommendPost", function (req, res) {
     //get params
+    console.log("creating recommendation")
     var params = req.params
     var from = params.from
     var to = params.to
@@ -150,12 +151,15 @@ Parse.Cloud.define("recommendPost", function (req, res) {
     newRecommendation.set("support", [])
     newRecommendation.save(null, objects.useMasterKeyOption).then((savedObject) => {
         //saved recommendation object, now create notification object
+        console.log("created recommendation")
         var fromQuery = new Parse.Query(Parse.User)
         fromQuery.get(from, objects.useMasterKeyOption).then((fromUser) => {
+            console.log("from query complete ")
             //get "to" user
             var toQuery = new Parse.Query(Parse.User)
             toQuery.get(to, objects.useMasterKeyOption).then((toUser) => {
                 //create first notification
+                console.log("to query complete")
                 var notification = new Parse.Object("Notification")
                 notification.set("type", "recommendationNotification")
                 notification.set("content", {
@@ -173,6 +177,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                 var postQuery = new Parse.Query("Post")
                 postQuery.get(post, objects.useMasterKeyOption).then((postObject) => {
                     //got all objects, now create notification
+                    console.log("got post")
                     var notification = new Parse.Object("Notification")
                     notification.set("type", "recommendationNotification")
                     notification.set("content", {
@@ -185,7 +190,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                     var notificationString = fromUser.get("name") + " recommended your post to " + toUser.get("name")
                     notification.set("notificationString", notificationString)
                     // notification.save(null, objects.useMasterKeyOption)
-
+                    console.log("returning")
                     res.success("recommendation successful")
                 }, (error) => {
                     //error getting post
