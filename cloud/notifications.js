@@ -117,3 +117,26 @@ Parse.Cloud.define("createNotification", function (req, res) {
         })
     }
 })
+
+// method to create recommendation notification
+Parse.Cloud.define("createRecommendationNotification", function (req, res) {
+    const params = req.params
+    const type = params.type
+    const forId = params.forId
+    const notificationString = params.notificationString
+    const postId = params.postId
+
+    // create notification object
+    var notification = new Parse.Object("Notification")
+    notification.set("type", type)
+    notification.set("forId", forId)
+    notification.set("notificationString", notificationString)
+    notification.set("content", { "postId": postId })
+
+    notification.save(null, objects.useMasterKeyOption).then((savedObject) => {
+        res.success("saved notification")
+    }, (error) => {
+        console.error("error saving notification object " + error)
+        res.error("error saving notification object " + error)
+    })
+})
