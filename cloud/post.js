@@ -169,7 +169,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                 })
                 notification.set("seen", false)
                 notification.set("forId", to)
-                // var notificationString = from.get("name") + " recommended a post to you"
+                var notificationString = fromUser.get("name") + " recommended a post to you"
                 notification.set("notificationString", notificationString)
                 // notification.save(null, objects.useMasterKeyOption)
 
@@ -186,7 +186,7 @@ Parse.Cloud.define("recommendPost", function (req, res) {
                         "to": to
                     })
                     notification.set("seen", false)
-                    notification.set("forId", post.get("from"))
+                    notification.set("forId", postObject.get("from"))
                     var notificationString = fromUser.get("name") + " recommended your post to " + toUser.get("name")
                     notification.set("notificationString", notificationString)
                     // notification.save(null, objects.useMasterKeyOption)
