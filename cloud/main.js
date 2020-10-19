@@ -72,8 +72,21 @@ Parse.Cloud.define("supportUser", function (req, res) {
             newSupportObject.set("from", from)
             newSupportObject.set("to", to)
             newSupportObject.save(null, objects.useMasterKeyOption).then((savedSupportObject) => {
-                //saved support object
-                res.success("You are now supporting this user")
+                // get from user
+                var fromUserQuery = new Parse.Query(Parse.User)
+                fromUserQuery.get(from, objects.useMasterKeyOption).then((fromUser) => {
+                    //saved support object, create notification
+                    var newNotification = new objects.NotificationObject()
+                    newNotification.set("forId", to)
+                    newNotification.set("notificationString", fromUser.get("name") + " supported you")
+                    newNotification.set("type", "supportNotification")
+                    newNotification.set("seen", false)
+                    newNotification.save(null, objects.useMasterKeyOption)
+                    res.success("You are now supporting this user")
+                }, (error) => {
+                    console.log("error getting fromUser " + from)
+                    res.error("There was an error supporting this user. Please try again in sometime.")
+                })
             }, (error) => {
                 //error saving support object
                 console.log("error saving support object " + error)
