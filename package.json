@@ -9,11 +9,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "express": "4.16.4",
+    "express": "4.17.3",
     "kerberos": "0.0.24",
-    "parse": "1.11.1",
-    "parse-server": "2.8.4",
-    "parse-dashboard": "1.2.0",
+    "parse": "3.4.1",
+    "parse-server": "4.10.5",
+    "parse-dashboard": "4.0.0",
     "firebase-admin": "6.2.0",
     "request-promise-native": "1.0.5",
     "public-ip": "2.4.0"
